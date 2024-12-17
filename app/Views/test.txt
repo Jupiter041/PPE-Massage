@@ -1,0 +1,66 @@
+// Dans InscriptionController.php, modifiez la méthode traiteInscription :
+public function traiteInscription() {
+    helper(['form']);
+    $session = session();
+
+    // Définir les règles de validation
+    $rules = [
+        'nom_utilisateur' => 'required|min_length[2]|max_length[50]',
+        'email' => 'required|valid_email|is_unique[comptes_utilisateurs.email]',
+        'mot_de_passe' => 'required|min_length[6]|max_length[50]',
+        'confirmpassword' => 'matches[mot_de_passe]',
+        'telephone' => 'required|numeric|exact_length[10]'  // Ajout de la validation du téléphone
+    ];
+
+    if ($this->validate($rules)) {
+        // Début de la transaction
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            // 1. Insérer dans la table comptes_utilisateurs
+            $userModel = new UserModel();
+            $userData = [
+                'nom_utilisateur' => $this->request->getPost('nom_utilisateur'),
+                'email' => $this->request->getPost('email'),
+                'mot_de_passe' => password_hash($this->request->getPost('mot_de_passe'), PASSWORD_DEFAULT),
+                'role' => '3'
+            ];
+            
+            $compte_id = $userModel->insert($userData);
+
+            // 2. Insérer dans la table clients
+            $clientModel = new ClientModel();
+            $clientData = [
+                'email' => $this->request->getPost('email'),
+                'telephone' => $this->request->getPost('telephone'),
+                'compte_id' => $compte_id
+            ];
+            
+            $clientModel->insert($clientData);
+
+            // Valider la transaction
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \Exception('Erreur lors de la transaction');
+            }
+
+            $session->setFlashdata('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');
+            return redirect()->to('/connexion');
+
+        } catch (\Exception $e) {
+            $db->transRollback();
+            $session->setFlashdata('msg', 'Une erreur est survenue lors de l\'inscription.');
+            return redirect()->back()->withInput();
+        }
+    } else {
+        // Renvoi des erreurs de validation
+        $data['validation'] = $this->validator;
+        echo view('inscription', $data);
+    }
+}
+
+// Dans inscription.php, ajoutez le champ téléphone :
+<label for="telephone">Téléphone</label>
+<input type="tel" id="telephone" name="telephone" value="<?= set_value('telephone') ?>" required pattern="[0-9]{10}" title="Veuillez entrer un numéro de téléphone valide à 10 chiffres">

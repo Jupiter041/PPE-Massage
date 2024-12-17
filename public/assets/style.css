@@ -1,0 +1,862 @@
+/* Reset et styles de base */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --accent-color: #e74c3c;
+    --background-color: #f5f7fa;
+    --text-color: #333;
+    --light-text-color: #ecf0f1;
+    --success-color: rgb(46, 172, 204);
+    --warning-color: #f39c12;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* En-tête et navigation */
+.main-nav {
+    background-color: var(--secondary-color);
+    padding: 15px 0;
+    box-shadow: var(--box-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-list {
+    list-style-type: none;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin: 0 20px;
+}
+
+.nav-link {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    background-color: #34495e;
+    border: 2px solid #34495e;
+}
+
+.nav-link:hover {
+    background-color: #ecf0f1;
+    color: #34495e;
+    border-color: #34495e;
+}
+
+.nav-link.active {
+    background-color: #2c3e50;
+    color: #fff;
+    border-color: #2c3e50;
+    box-shadow: 0 4px 6px rgba(44, 62, 80, 0.2);
+}
+
+.profile-item {
+    margin-left: auto;
+}
+
+.profile-link {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.profile-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: #34495e;
+    border-radius: 0 25px 25px 0;
+    padding: 8px 20px 8px 8px;
+    transition: all 0.3s ease;
+}
+
+.profile-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.profile-text {
+    color: #ecf0f1;
+}
+
+.profile-link:hover .profile-wrapper {
+    background-color: #ecf0f1;
+}
+
+.profile-link:hover .profile-text {
+    color: #34495e;
+}
+/* Conteneur principal */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    flex: 1;
+}
+
+/* Titres */
+h1, h2, h3 {
+    color: var(--secondary-color);
+    margin-bottom: 25px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Bouton ajouter au panier */
+.btn-add-to-cart {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    text-align: center;
+    margin: 15px auto;
+    display: block;
+    width: fit-content;
+}
+
+.btn-add-to-cart:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.massage-type-actions {
+    margin-top: auto;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+/* Liste des types de massages */
+ul {
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    padding: 20px;
+}
+
+li {
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+li:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.massage-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+li:hover .massage-image {
+    transform: scale(1.05);
+}
+
+h3 {
+    font-size: 22px;
+    padding: 20px 25px 15px;
+    color: var(--secondary-color);
+    font-weight: 700;
+}
+
+.massage-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-color);
+    padding: 0 25px 15px;
+}
+
+.massage-description {
+    padding: 0 25px 25px;
+    color: #7f8c8d;
+    flex-grow: 1;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.massage-type-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 25px 25px;
+}
+
+/* Boutons */
+.btn {
+    display: inline-block;
+    background-color: #3498db;
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-add-massage {
+    display: inline-block;
+    background-color: #3498db;
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto 30px;
+    display: block;
+    width: fit-content;
+}
+
+.btn-add-massage:hover {
+    background-color: #2980b9;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-add-massage:active {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-add-massage:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: all 0.4s ease;
+}
+
+.btn-add-massage:hover:before {
+    left: 100%;
+}
+
+.btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: all 0.4s ease;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:hover:before {
+    left: 100%;
+}
+
+.btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-edit {
+    background-color: #3498db;
+}
+
+.btn-edit:hover {
+    background-color: #2980b9;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+/* Formulaires */
+form {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--secondary-color);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 25px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: var(--transition);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+/* Message de succès */
+.success-message {
+    background-color: var(--success-color);
+    color: #fff;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 30px;
+    font-size: 18px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles spécifiques pour le formulaire de réservation */
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="time"],
+select {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 25px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+select:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
+    background-color: #ffffff;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.btn {
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    color: white;
+    padding: 16px 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 30px;
+    text-transform: uppercase;
+}
+
+.btn:hover {
+    background: linear-gradient(135deg, #357abd 0%, #2c6aa0 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.25);
+}
+/* Pied de page */
+footer {
+    text-align: center;
+    padding: 25px;
+    background-color: var(--secondary-color);
+    color: var(--light-text-color);
+    margin-top: auto;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+}
+/* Responsive design */
+@media (max-width: 1200px) {
+    ul {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    ul {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    .nav-list {
+        flex-direction: column;
+    }
+
+    .nav-item {
+        margin: 10px 0;
+    }
+
+    ul {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Styles pour les messages d'erreur */
+.error-message {
+    background-color: var(--accent-color);
+    color: #fff;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 30px;
+    font-size: 18px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles pour les tooltips */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: var(--secondary-color);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Styles pour la page d'inscription */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    outline: none;
+}
+button[type="submit"] {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: var(--primary-color-dark);
+}
+
+p {
+    text-align: center;
+    margin-top: 20px;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* Styles pour le mode sombre */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #1a1a1a;
+        --text-color: #f0f0f0;
+        --light-text-color: #c0c0c0;
+        --nav-background: #2a2a2a;
+        --input-background: #333333;
+        --input-border: #555555;
+    }
+
+    body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .main-nav {
+        background-color: var(--nav-background);
+    }
+
+    li, form {
+        background-color: var(--nav-background);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        background-color: var(--input-background);
+        color: var(--text-color);
+        border-color: var(--input-border);
+    }
+
+    a {
+        color: #4a90e2;
+    }
+
+    a:hover {
+        color: #63a4ff;
+    }
+
+    button, .button {
+        background-color: #4a90e2;
+        color: #ffffff;
+    }
+
+    button:hover, .button:hover {
+        background-color: #63a4ff;
+    }
+}
+/* Styles pour la page des logs */
+.table-responsive {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    margin: 20px 0;
+    transition: all 0.3s ease;
+    padding: 20px;
+    width: 100%;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.table {
+    margin-bottom: 0;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    border-bottom: 2px solid #e2e8f0;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 12px 16px;
+    vertical-align: middle;
+    color: #4a5568;
+    letter-spacing: 0.6px;
+}
+
+.table tbody td {
+    padding: 10px 16px;
+    vertical-align: middle;
+    border-top: 1px solid rgba(0, 0, 0, 0.03);
+    font-size: 0.85rem;
+    transition: background-color 0.2s ease;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.015);
+}
+
+.badge {
+    padding: 4px 8px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.badge.bg-secondary {
+    background-color: #475569 !important;
+}
+
+.badge.bg-success {
+    background-color: #059669 !important;
+}
+
+.badge.bg-warning {
+    background-color: #d97706 !important;
+    color: #fff;
+}
+
+.badge.bg-danger {
+    background-color: #dc2626 !important;
+}
+
+#filterForm {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+#filterForm div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#filterForm label {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.85rem;
+    margin: 0;
+    white-space: nowrap;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+#filterForm select {
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 6px 12px;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    min-width: 160px;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+#filterForm select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+#filterForm .btn {
+    padding: 6px 12px;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+#filterForm .btn-primary {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+#filterForm .btn-primary:hover {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+#filterForm .btn-secondary {
+    background-color: #64748b;
+    border-color: #64748b;
+}
+
+#filterForm .btn-secondary:hover {
+    background-color: #475569;
+    border-color: #475569;
+}
+
+.alert-info {
+    background-color: #f0f9ff;
+    border-color: #bae6fd;
+    color: #0369a1;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 16px;
+    font-weight: 500;
+    text-align: center;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+/* Dark mode support for logs page */
+@media (prefers-color-scheme: dark) {
+    .table-responsive {
+        background: var(--nav-background);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .table {
+        color: var(--text-color);
+    }
+
+    .table thead th {
+        color: var(--light-text-color);
+        border-bottom-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .table tbody td {
+        border-top-color: rgba(255, 255, 255, 0.04);
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    #filterForm {
+        background: var(--nav-background);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #filterForm label {
+        color: var(--text-color);
+    }
+
+    #filterForm select {
+        background-color: var(--input-background);
+        border-color: var(--input-border);
+        color: var(--text-color);
+    }
+
+    #filterForm select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+    }
+
+    .alert-info {
+        background-color: rgba(239, 246, 255, 0.05);
+        border-color: rgba(147, 197, 253, 0.1);
+        color: #93c5fd;
+    }
+}
