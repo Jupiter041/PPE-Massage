@@ -15,5 +15,3 @@ class TypeMassageModel extends Model
         return $this->all();
     }
 }
-
-//utiliser eloquent!!!!

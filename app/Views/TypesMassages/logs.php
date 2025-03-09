@@ -1,4 +1,4 @@
-  <div class="container">
+  <div class="conteneur">
       <h2>Logs système</h2>
     
       <div class="card mb-4">
@@ -38,7 +38,7 @@
           <table class="table">
               <thead>
                   <tr>
-                      <th>ID</th>
+                      <th></th>
                       <th>Table</th>
                       <th>Action</th>
                       <th>Description</th>

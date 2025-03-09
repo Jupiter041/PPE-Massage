@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : mar. 26 nov. 2024 à 07:36
--- Version du serveur : 10.11.4-MariaDB-1~deb12u1
--- Version de PHP : 8.2.7
+-- Généré le : dim. 16 fév. 2025 à 18:13
+-- Version du serveur : 10.11.6-MariaDB-0+deb12u1
+-- Version de PHP : 8.2.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,53 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de données : `massage`
 --
-
--- --------------------------------------------------------
-
---
--- Structure de la table `clients`
---
-
-CREATE TABLE `clients` (
-  `client_id` int(11) NOT NULL,
-  `email` varchar(50) DEFAULT NULL,
-  `telephone` varchar(20) DEFAULT NULL,
-  `compte_id` int(11) NOT NULL,
-  `civilite` varchar(5) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `clients`
---
-
-INSERT INTO `clients` (`client_id`, `email`, `telephone`, `compte_id`, `civilite`) VALUES
-(1, 'client1@exemple.com', '0123456789', 4, ''),
-(2, 'client2@exemple.com', '0987654321', 5, '');
-
---
--- Déclencheurs `clients`
---
-DELIMITER $$
-CREATE TRIGGER `log_after_delete_client` AFTER DELETE ON `clients` FOR EACH ROW BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('clients', 'DELETE', CONCAT('Client supprimé - ID: ', OLD.client_id));
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `log_after_insert_client` AFTER INSERT ON `clients` FOR EACH ROW BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('clients', 'INSERT', CONCAT('Nouveau client créé - ID: ', NEW.client_id));
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `log_after_update_client` AFTER UPDATE ON `clients` FOR EACH ROW BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('clients', 'UPDATE', CONCAT('Client modifié - ID: ', NEW.client_id));
-END
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -87,7 +40,7 @@ CREATE TABLE `comptes_utilisateurs` (
 --
 
 INSERT INTO `comptes_utilisateurs` (`compte_id`, `nom_utilisateur`, `mot_de_passe`, `role`, `email`) VALUES
-(1, 'admin', '$2y$10$pggxJTNX802JOZUqBhYEJ.AHZZhzbfFeQTe2c8Gg7sHOa8XQsNgC6', 1, 'sylvain.pivois@outlook.com'),
+(1, 'admin', '$2y$10$RNqwm9wgkcZl6MN.CuNB5.yp8ZkmWjCDtZRh74kFpfj/pOicIOJqS', 1, 'sylvain.pivois@outlook.com'),
 (2, 'employe1', 'employe123', 2, ''),
 (3, 'employe2', 'employe456', 2, ''),
 (4, 'client1', 'client123', 3, ''),
@@ -96,6 +49,31 @@ INSERT INTO `comptes_utilisateurs` (`compte_id`, `nom_utilisateur`, `mot_de_pass
 (8, 'pepsiman', '$2y$10$SMGNnwtmW9llctWxq3hjouqCaRHXbRk0OGSkQxJYbC0hJ3aJMbLRW', 3, 'pepsi@cool.fr'),
 (9, 'justine', '$2y$10$4snO1V8drI6.Pukd74eP0.15ddLuxtn8QpKm4lM05w5cSjt3vmG6a', 3, 'justine@email.com'),
 (10, 'admin', '$2y$10$RNqwm9wgkcZl6MN.CuNB5.yp8ZkmWjCDtZRh74kFpfj/pOicIOJqS', 3, 'test@test.fr');
+
+--
+-- Déclencheurs `comptes_utilisateurs`
+--
+DELIMITER $$
+CREATE TRIGGER `log_after_delete_compte` AFTER DELETE ON `comptes_utilisateurs` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('comptes_utilisateurs', 'DELETE', CONCAT('Compte supprimé - ID: ', OLD.compte_id));
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `log_after_insert_compte` AFTER INSERT ON `comptes_utilisateurs` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('comptes_utilisateurs', 'INSERT', CONCAT('Nouveau compte créé - ID: ', NEW.compte_id));
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `log_after_update_compte` AFTER UPDATE ON `comptes_utilisateurs` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('comptes_utilisateurs', 'UPDATE', CONCAT('Compte modifié - ID: ', NEW.compte_id));
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -157,6 +135,74 @@ CREATE TABLE `logs` (
   `date_log` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `logs`
+--
+
+INSERT INTO `logs` (`log_id`, `table_name`, `action`, `description`, `date_log`) VALUES
+(1, 'types_massages', 'UPDATE', 'Type de massage modifié - ID: 1', '2025-01-11 11:03:52'),
+(2, 'types_massages', 'INSERT', 'Nouveau type de massage créé - ID: 63', '2025-01-11 11:04:09'),
+(3, 'types_massages', 'DELETE', 'Type de massage supprimé - ID: 63', '2025-01-11 11:04:20'),
+(4, 'types_massages', 'INSERT', 'Nouveau type de massage créé - ID: 64', '2025-01-11 11:06:49'),
+(5, 'types_massages', 'UPDATE', 'Type de massage modifié - ID: 64', '2025-01-11 11:07:07'),
+(6, 'comptes_utilisateurs', 'UPDATE', 'Compte modifié - ID: 1', '2025-02-02 08:07:27'),
+(7, 'comptes_utilisateurs', 'UPDATE', 'Compte modifié - ID: 1', '2025-02-02 08:11:47'),
+(8, 'comptes_utilisateurs', 'UPDATE', 'Compte modifié - ID: 1', '2025-02-02 08:12:02'),
+(9, 'comptes_utilisateurs', 'UPDATE', 'Compte modifié - ID: 1', '2025-02-02 08:12:46'),
+(10, 'comptes_utilisateurs', 'UPDATE', 'Compte modifié - ID: 1', '2025-02-02 08:14:30'),
+(11, 'comptes_utilisateurs', 'UPDATE', 'Compte modifié - ID: 1', '2025-02-02 08:16:24'),
+(12, 'types_massages', 'INSERT', 'Nouveau type de massage créé - ID: 65', '2025-02-02 08:22:37'),
+(13, 'types_massages', 'UPDATE', 'Type de massage modifié - ID: 65', '2025-02-02 08:22:45'),
+(14, 'types_massages', 'DELETE', 'Type de massage supprimé - ID: 65', '2025-02-02 08:22:51'),
+(15, 'types_massages', 'INSERT', 'Nouveau type de massage créé - ID: 66', '2025-02-02 09:43:29'),
+(16, 'types_massages', 'DELETE', 'Type de massage supprimé - ID: 66', '2025-02-02 09:43:35'),
+(17, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 2', '2025-02-02 09:50:47'),
+(18, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 3', '2025-02-02 09:52:24'),
+(19, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 4', '2025-02-02 10:07:26'),
+(20, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 5', '2025-02-02 10:12:00'),
+(21, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 6', '2025-02-02 10:23:29'),
+(22, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 7', '2025-02-02 10:26:57'),
+(23, 'panier', 'DELETE', 'Article supprimé du panier - ID: 2', '2025-02-02 18:22:41'),
+(24, 'panier', 'DELETE', 'Article supprimé du panier - ID: 3', '2025-02-02 18:22:41'),
+(25, 'panier', 'DELETE', 'Article supprimé du panier - ID: 4', '2025-02-02 18:22:41'),
+(26, 'panier', 'DELETE', 'Article supprimé du panier - ID: 6', '2025-02-02 18:22:45'),
+(27, 'panier', 'DELETE', 'Article supprimé du panier - ID: 7', '2025-02-02 18:22:47'),
+(28, 'panier', 'DELETE', 'Article supprimé du panier - ID: 1', '2025-02-02 18:22:56'),
+(29, 'panier', 'DELETE', 'Article supprimé du panier - ID: 5', '2025-02-02 18:22:56'),
+(30, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 8', '2025-02-02 18:23:01'),
+(31, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 9', '2025-02-02 18:23:04'),
+(32, 'panier', 'DELETE', 'Article supprimé du panier - ID: 8', '2025-02-02 18:23:08'),
+(33, 'panier', 'DELETE', 'Article supprimé du panier - ID: 9', '2025-02-02 18:23:08'),
+(34, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 10', '2025-02-02 19:42:58'),
+(35, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 11', '2025-02-02 19:43:01'),
+(36, 'panier', 'DELETE', 'Article supprimé du panier - ID: 10', '2025-02-02 19:43:15'),
+(37, 'panier', 'DELETE', 'Article supprimé du panier - ID: 11', '2025-02-02 19:43:15'),
+(38, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 12', '2025-02-02 20:20:52'),
+(39, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 13', '2025-02-02 20:20:57'),
+(40, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 14', '2025-02-02 20:21:53'),
+(41, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 15', '2025-02-02 20:21:57'),
+(42, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 16', '2025-02-02 20:22:05'),
+(43, 'panier', 'DELETE', 'Article supprimé du panier - ID: 16', '2025-02-02 20:22:11'),
+(44, 'panier', 'DELETE', 'Article supprimé du panier - ID: 13', '2025-02-03 07:51:40'),
+(45, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 17', '2025-02-03 07:51:53'),
+(46, 'panier', 'DELETE', 'Article supprimé du panier - ID: 12', '2025-02-03 07:52:03'),
+(47, 'panier', 'DELETE', 'Article supprimé du panier - ID: 17', '2025-02-03 07:52:03'),
+(48, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 18', '2025-02-13 18:36:28'),
+(49, 'panier', 'DELETE', 'Article supprimé du panier - ID: 18', '2025-02-13 18:37:21'),
+(50, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 19', '2025-02-13 18:37:29'),
+(51, 'reservations', 'INSERT', 'Nouvelle réservation - ID: 3 - Client ID: 1', '2025-02-13 18:41:01'),
+(52, 'panier', 'DELETE', 'Article supprimé du panier - ID: 19', '2025-02-13 18:41:01'),
+(53, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 20', '2025-02-13 18:48:36'),
+(54, 'reservations', 'INSERT', 'Nouvelle réservation - ID: 4 - Client ID: 1', '2025-02-15 14:43:34'),
+(55, 'panier', 'DELETE', 'Article supprimé du panier - ID: 20', '2025-02-15 14:43:34'),
+(56, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 21', '2025-02-15 14:45:38'),
+(57, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 22', '2025-02-15 14:45:43'),
+(58, 'panier', 'DELETE', 'Article supprimé du panier - ID: 22', '2025-02-15 15:00:24'),
+(59, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 23', '2025-02-16 16:24:16'),
+(60, 'panier', 'DELETE', 'Article supprimé du panier - ID: 21', '2025-02-16 16:24:20'),
+(61, 'panier', 'DELETE', 'Article supprimé du panier - ID: 23', '2025-02-16 16:24:25'),
+(62, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 24', '2025-02-16 16:24:28');
+
 -- --------------------------------------------------------
 
 --
@@ -176,7 +222,34 @@ CREATE TABLE `panier` (
 --
 
 INSERT INTO `panier` (`panier_id`, `compte_id`, `type_massage_id`, `quantite`, `date_ajout`) VALUES
-(1, 1, 1, 1, '2024-11-25 07:25:40');
+(14, 10, 3, 1, '2025-02-02 19:21:53'),
+(15, 10, 43, 1, '2025-02-02 19:21:57'),
+(24, 1, 1, 1, '2025-02-16 15:24:28');
+
+--
+-- Déclencheurs `panier`
+--
+DELIMITER $$
+CREATE TRIGGER `log_after_delete_panier` AFTER DELETE ON `panier` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('panier', 'DELETE', CONCAT('Article supprimé du panier - ID: ', OLD.panier_id));
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `log_after_insert_panier` AFTER INSERT ON `panier` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('panier', 'INSERT', CONCAT('Nouvel article ajouté au panier - ID: ', NEW.panier_id));
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `log_after_update_panier` AFTER UPDATE ON `panier` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('panier', 'UPDATE', CONCAT('Article du panier modifié - ID: ', NEW.panier_id));
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -192,18 +265,20 @@ CREATE TABLE `reservations` (
   `salle_id` int(11) NOT NULL,
   `type_id` int(11) NOT NULL,
   `employe_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `preference_praticien` char(1) DEFAULT NULL,
-  `date_creation` timestamp NULL DEFAULT current_timestamp()
+  `date_creation` timestamp NULL DEFAULT current_timestamp(),
+  `compte_id` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `reservations`
 --
 
-INSERT INTO `reservations` (`reservation_id`, `heure_reservation`, `commentaires`, `duree`, `salle_id`, `type_id`, `employe_id`, `client_id`, `preference_praticien`, `date_creation`) VALUES
-(1, '2024-10-05 14:00:00', 'Massage relaxant demandé.', 60, 1, 1, 1, 1, NULL, '2024-11-26 07:16:04'),
-(2, '2024-10-05 15:30:00', 'Demande de Shiatsu spécifique.', 90, 2, 2, 2, 2, NULL, '2024-11-26 07:16:04');
+INSERT INTO `reservations` (`reservation_id`, `heure_reservation`, `commentaires`, `duree`, `salle_id`, `type_id`, `employe_id`, `preference_praticien`, `date_creation`, `compte_id`) VALUES
+(1, '2024-10-05 14:00:00', 'Massage relaxant demandé.', 60, 1, 1, 1, NULL, '2024-11-26 07:16:04', 1),
+(2, '2024-10-05 15:30:00', 'Demande de Shiatsu spécifique.', 90, 2, 2, 2, NULL, '2024-11-26 07:16:04', 1),
+(3, '2025-02-14 18:41:01', 'Réservation créée depuis le panier', 60, 1, 2, 1, NULL, '2025-02-13 18:41:01', 1),
+(4, '2025-02-16 14:43:34', 'Réservation créée depuis le panier', 60, 1, 1, 1, NULL, '2025-02-15 14:43:34', 1);
 
 --
 -- Déclencheurs `reservations`
@@ -331,6 +406,31 @@ INSERT INTO `Salle` (`salle_id`, `nom_salle`, `disponibilite`) VALUES
 (2, 'Salle de massage 2', 1),
 (3, 'Salle de massage 3', 0);
 
+--
+-- Déclencheurs `Salle`
+--
+DELIMITER $$
+CREATE TRIGGER `log_after_delete_salle` AFTER DELETE ON `Salle` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('Salle', 'DELETE', CONCAT('Salle supprimée - ID: ', OLD.salle_id));
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `log_after_insert_salle` AFTER INSERT ON `Salle` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('Salle', 'INSERT', CONCAT('Nouvelle salle créée - ID: ', NEW.salle_id));
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `log_after_update_salle` AFTER UPDATE ON `Salle` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('Salle', 'UPDATE', CONCAT('Salle modifiée - ID: ', NEW.salle_id));
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -351,7 +451,7 @@ CREATE TABLE `types_massages` (
 --
 
 INSERT INTO `types_massages` (`type_id`, `nom_type`, `description`, `prix`, `created_at`, `updated_at`) VALUES
-(1, 'Massage Suédois', 'Un massage classique qui aide à détendre les muscles.', 70.00, '2024-10-04 10:33:14', '2024-10-08 10:41:52'),
+(1, 'Massage Suédois', 'Un massage classique qui aide à détendre les muscles.', 70.01, '2024-10-04 10:33:14', '2025-01-11 10:03:52'),
 (2, 'Shiatsu', 'Massage bas sur la mdecine traditionnelle japonaise.', 70.00, '2024-10-04 10:33:14', '2024-10-18 07:58:36'),
 (3, 'Massage à la Raclette', 'Massage basé sur de la raclette chaude.', 60.01, '2024-10-04 10:33:14', '2024-11-12 09:23:16'),
 (4, 'Massage aux pierres chaudes', 'Utilise des pierres chauffées pour apaiser les tensions.', 90.00, '2024-10-04 10:33:14', '2024-10-04 10:33:14'),
@@ -359,18 +459,37 @@ INSERT INTO `types_massages` (`type_id`, `nom_type`, `description`, `prix`, `cre
 (43, 'TestSQLInjection', 'SELECT * FROM types_massages WHERE id  1 OR 1 = 1', 14.02, '2024-10-15 06:25:29', '2024-10-18 10:54:37'),
 (59, 'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', 'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', 14.00, '2024-10-18 08:13:20', '2024-10-18 08:13:20'),
 (60, 'test', 'alert(&#39;XSS&#39;)', 15.00, '2024-10-18 10:53:44', '2024-10-18 10:53:44'),
-(62, 'ffffff', 'fffffffffffffffff', 1452.00, '2024-11-08 15:39:51', '2024-11-08 15:39:51');
+(62, 'ffffff', 'fffffffffffffffff', 1452.00, '2024-11-08 15:39:51', '2024-11-08 15:39:51'),
+(64, 'Huiles Divines', 'massage avec de aux huiles divines', 150.00, '2025-01-11 11:06:49', '2025-01-11 10:07:07');
+
+--
+-- Déclencheurs `types_massages`
+--
+DELIMITER $$
+CREATE TRIGGER `log_after_delete_type_massage` AFTER DELETE ON `types_massages` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('types_massages', 'DELETE', CONCAT('Type de massage supprimé - ID: ', OLD.type_id));
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `log_after_insert_type_massage` AFTER INSERT ON `types_massages` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('types_massages', 'INSERT', CONCAT('Nouveau type de massage créé - ID: ', NEW.type_id));
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `log_after_update_type_massage` AFTER UPDATE ON `types_massages` FOR EACH ROW BEGIN
+    INSERT INTO logs (table_name, action, description)
+    VALUES ('types_massages', 'UPDATE', CONCAT('Type de massage modifié - ID: ', NEW.type_id));
+END
+$$
+DELIMITER ;
 
 --
 -- Index pour les tables déchargées
 --
-
---
--- Index pour la table `clients`
---
-ALTER TABLE `clients`
-  ADD PRIMARY KEY (`client_id`),
-  ADD UNIQUE KEY `compte_id` (`compte_id`);
 
 --
 -- Index pour la table `comptes_utilisateurs`
@@ -407,7 +526,7 @@ ALTER TABLE `reservations`
   ADD KEY `salle_id` (`salle_id`),
   ADD KEY `type_id` (`type_id`),
   ADD KEY `employe_id` (`employe_id`),
-  ADD KEY `client_id` (`client_id`);
+  ADD KEY `reservations_ibfk_4` (`compte_id`);
 
 --
 -- Index pour la table `Salle`
@@ -426,12 +545,6 @@ ALTER TABLE `types_massages`
 --
 
 --
--- AUTO_INCREMENT pour la table `clients`
---
-ALTER TABLE `clients`
-  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
 -- AUTO_INCREMENT pour la table `comptes_utilisateurs`
 --
 ALTER TABLE `comptes_utilisateurs`
@@ -447,19 +560,19 @@ ALTER TABLE `employe`
 -- AUTO_INCREMENT pour la table `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT pour la table `panier`
 --
 ALTER TABLE `panier`
-  MODIFY `panier_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `panier_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT pour la table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `Salle`
@@ -471,17 +584,11 @@ ALTER TABLE `Salle`
 -- AUTO_INCREMENT pour la table `types_massages`
 --
 ALTER TABLE `types_massages`
-  MODIFY `type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- Contraintes pour les tables déchargées
 --
-
---
--- Contraintes pour la table `clients`
---
-ALTER TABLE `clients`
-  ADD CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`);
 
 --
 -- Contraintes pour la table `employe`
@@ -503,100 +610,9 @@ ALTER TABLE `reservations`
   ADD CONSTRAINT `reservations_ibfk_1` FOREIGN KEY (`salle_id`) REFERENCES `Salle` (`salle_id`),
   ADD CONSTRAINT `reservations_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `types_massages` (`type_id`),
   ADD CONSTRAINT `reservations_ibfk_3` FOREIGN KEY (`employe_id`) REFERENCES `employe` (`employe_id`),
-  ADD CONSTRAINT `reservations_ibfk_4` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`);
+  ADD CONSTRAINT `reservations_ibfk_4` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-
--- Triggers pour la table comptes_utilisateurs
-DELIMITER $
-CREATE TRIGGER `log_after_insert_compte` AFTER INSERT ON `comptes_utilisateurs` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('comptes_utilisateurs', 'INSERT', CONCAT('Nouveau compte créé - ID: ', NEW.compte_id));
-END
-$
-
-CREATE TRIGGER `log_after_update_compte` AFTER UPDATE ON `comptes_utilisateurs` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('comptes_utilisateurs', 'UPDATE', CONCAT('Compte modifié - ID: ', NEW.compte_id));
-END
-$
-
-CREATE TRIGGER `log_after_delete_compte` AFTER DELETE ON `comptes_utilisateurs` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('comptes_utilisateurs', 'DELETE', CONCAT('Compte supprimé - ID: ', OLD.compte_id));
-END
-$
-
--- Triggers pour la table Salle
-CREATE TRIGGER `log_after_insert_salle` AFTER INSERT ON `Salle` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('Salle', 'INSERT', CONCAT('Nouvelle salle créée - ID: ', NEW.salle_id));
-END
-$
-
-CREATE TRIGGER `log_after_update_salle` AFTER UPDATE ON `Salle` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('Salle', 'UPDATE', CONCAT('Salle modifiée - ID: ', NEW.salle_id));
-END
-$
-
-CREATE TRIGGER `log_after_delete_salle` AFTER DELETE ON `Salle` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('Salle', 'DELETE', CONCAT('Salle supprimée - ID: ', OLD.salle_id));
-END
-$
-
--- Triggers pour la table types_massages
-CREATE TRIGGER `log_after_insert_type_massage` AFTER INSERT ON `types_massages` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('types_massages', 'INSERT', CONCAT('Nouveau type de massage créé - ID: ', NEW.type_id));
-END
-$
-
-CREATE TRIGGER `log_after_update_type_massage` AFTER UPDATE ON `types_massages` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('types_massages', 'UPDATE', CONCAT('Type de massage modifié - ID: ', NEW.type_id));
-END
-$
-
-CREATE TRIGGER `log_after_delete_type_massage` AFTER DELETE ON `types_massages` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('types_massages', 'DELETE', CONCAT('Type de massage supprimé - ID: ', OLD.type_id));
-END
-$
-
--- Triggers pour la table panier
-CREATE TRIGGER `log_after_insert_panier` AFTER INSERT ON `panier` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('panier', 'INSERT', CONCAT('Nouvel article ajouté au panier - ID: ', NEW.panier_id));
-END
-$
-
-CREATE TRIGGER `log_after_update_panier` AFTER UPDATE ON `panier` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('panier', 'UPDATE', CONCAT('Article du panier modifié - ID: ', NEW.panier_id));
-END
-$
-
-CREATE TRIGGER `log_after_delete_panier` AFTER DELETE ON `panier` FOR EACH ROW
-BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('panier', 'DELETE', CONCAT('Article supprimé du panier - ID: ', OLD.panier_id));
-END
-$
-DELIMITER ;

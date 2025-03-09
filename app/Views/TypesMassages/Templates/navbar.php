@@ -1,6 +1,7 @@
 <body>
 <nav class="main-nav">
     <ul class="nav-list">
+        <?php var_dump(base_url()); ?>
         <li class="nav-item"><a href="<?= base_url('/') ?>" class="nav-link">Accueil</a></li>
         <?php if (session()->get('isLoggedIn')): ?>
             <?php if (session()->get('role') == '1'): ?>
