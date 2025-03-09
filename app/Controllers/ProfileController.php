@@ -24,7 +24,7 @@ class ProfileController extends BaseController
         $data = [
             'user' => $user
         ];
-test
+//test
         echo view('TypesMassages/Templates/header');
         echo view('TypesMassages/Templates/navbar');
         echo view('profile', $data);
