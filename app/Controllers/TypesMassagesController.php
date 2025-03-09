@@ -4,13 +4,14 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use App\Models\TypeMassageModel;
-use Illuminate\Database\Capsule\Manager as DB;
+use App\Models\PanierModel;
 
 class TypesMassagesController extends BaseController
 {
     protected $session;
     protected $typeMassageModel;
     protected $userModel;
+    protected $panierModel;
 
     public function __construct()
     {
@@ -18,6 +19,7 @@ class TypesMassagesController extends BaseController
         $this->session = \Config\Services::session();
         $this->typeMassageModel = new TypeMassageModel();
         $this->userModel = new UserModel();
+        $this->panierModel = new PanierModel();
     }
     
     public function index()
@@ -56,19 +58,33 @@ class TypesMassagesController extends BaseController
 
     public function details($id = null)
     {
-        $typesMassages = $this->typeMassageModel->findAllAsObjects();
-        $selectedMassage = null;
-        
-        if ($id) {
-            $selectedMassage = $this->typeMassageModel->find($id);
+        $session = session();
+        if (!$session->get('isLoggedIn')) {
+            return redirect()->to('/connexion')->with('error', 'Veuillez vous connecter pour ajouter au panier');
         }
-        
-        return view('massage_details', [
-            'typesMassages' => $typesMassages,
-            'selectedMassage' => $selectedMassage
-        ]);
-    }
 
+        if ($id === null) {
+            return redirect()->to('/TypesMassages')->with('error', 'Massage non trouvé');
+        }
+
+        $typeMassage = $this->typeMassageModel->find($id);
+        if (!$typeMassage) {
+            return redirect()->to('/TypesMassages')->with('error', 'Massage non trouvé');
+        }
+
+        $panierData = [
+            'compte_id' => $session->get('id'),
+            'type_massage_id' => $id,
+            'quantite' => 1,
+            'date_ajout' => date('Y-m-d H:i:s')
+        ];
+
+        if ($this->panierModel->insert($panierData)) {
+            return redirect()->to('/panier')->with('success', 'Massage ajouté au panier avec succès');
+        } else {
+            return redirect()->to('/TypesMassages')->with('error', "Erreur lors de l'ajout au panier");
+        }
+    }
     public function create()
     {
         if (!session()->get('isLoggedIn') || session()->get('role') != 1) {
@@ -105,7 +121,6 @@ class TypesMassagesController extends BaseController
         echo view('TypesMassages/create');
         echo view('TypesMassages/Templates/footer');
     }
-    
     public function edit($id)
     {
         if (!session()->get('isLoggedIn') || session()->get('role') != 1) {

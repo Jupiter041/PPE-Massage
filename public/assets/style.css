@@ -124,6 +124,17 @@ body {
     flex: 1;
 }
 
+.conteneur {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+
+}
+
+
+
+
 /* Titres */
 h1, h2, h3 {
     color: var(--secondary-color);
@@ -858,5 +869,145 @@ a:hover {
         background-color: rgba(239, 246, 255, 0.05);
         border-color: rgba(147, 197, 253, 0.1);
         color: #93c5fd;
+    }
+}
+/* Style pour le panier */
+.table-panier {
+    width: 100%;
+    background: var(--nav-background);
+    border-radius: 12px;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.table-panier thead th {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--light-text-color);
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid var(--input-border);
+}
+
+.table-panier tbody td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: var(--text-color);
+}
+
+.table-panier tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.table-panier tfoot td {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    font-weight: bold;
+}
+
+.form-control-panier {
+    background: var(--input-background);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    padding: 8px;
+    width: 80px;
+    color: var(--text-color);
+}
+
+.quantity-form-panier {
+    display: inline-block;
+}
+
+.quantity-input-panier {
+    text-align: center;
+}
+
+.btn-panier {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary-panier {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-primary-panier:hover {
+    background: #2563eb;
+}
+
+.btn-danger-panier {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger-panier:hover {
+    background: #dc2626;
+}
+
+.btn-warning-panier {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-warning-panier:hover {
+    background: #d97706;
+}
+
+.btn-success-panier {
+    background: #10b981;
+    color: white;
+}
+
+.btn-success-panier:hover {
+    background: #059669;
+}
+
+.btn-sm-panier {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+}
+
+.cart-actions-panier {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+.alert-panier {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.alert-success-panier {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+@media (prefers-color-scheme: dark) {
+    .table-panier {
+        background: var(--nav-background);
+    }
+
+    .table-panier thead th {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .table-panier tbody tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .form-control-panier {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
     }
 }

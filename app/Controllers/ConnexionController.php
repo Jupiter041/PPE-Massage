@@ -6,7 +6,9 @@ use App\Models\UserModel;
 class ConnexionController extends BaseController {
     public function index() {
         helper(['form']);
+        echo view('TypesMassages/Templates/header');
         echo view('connexion');
+        echo view('TypesMassages/Templates/footer');
     }
 
     public function traiteConnexion() {
@@ -42,4 +44,9 @@ class ConnexionController extends BaseController {
         return redirect()->to('/connexion');
     }
 
+    public function show404() {
+        echo view('TypesMassages/Templates/header');
+        echo view('errors/html/error_404');
+        echo view('TypesMassages/Templates/footer');
+    }
 }

@@ -16,7 +16,7 @@
                 <p><?= esc($typeMassage->description) ?></p>
             </div>
             <div class="massage-type-actions">
-                <a href="<?= base_url('Panier/ajouter/' . $typeMassage->type_id) ?>" class="btn-add-to-cart">Ajouter au panier</a>
+                <a href="<?= base_url('TypesMassages/details/' . $typeMassage->type_id) ?>" class="btn-add-to-cart">Ajouter au panier</a>
                 <?php if(session()->get('role') === 1): ?>
                     <a href="<?= base_url('TypesMassages/edit/' . $typeMassage->type_id) ?>" class="btn btn-edit">Modifier</a>
                     <a href="<?= base_url('TypesMassages/delete/' . $typeMassage->type_id) ?>" class="btn btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce type de massage ?');">Supprimer</a>

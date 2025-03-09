@@ -10,8 +10,5 @@ class UserModel extends Model
     protected $fillable = ['nom_utilisateur', 'mot_de_passe', 'role', 'email'];
     public $timestamps = false;
 
-    public function client()
-    {
-        return $this->hasOne(ClientModel::class, 'compte_id', 'compte_id');
-    }
+
 }

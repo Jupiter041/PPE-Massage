@@ -8,21 +8,27 @@ class PanierModel extends Model
 {
     protected $table = 'panier';
     protected $primaryKey = 'panier_id';
-    protected $fillable = ['compte_id', 'type_massage_id', 'quantite', 'date_ajout'];
     public $timestamps = false;
+
+    protected $fillable = [
+        'compte_id',
+        'type_massage_id', 
+        'quantite',
+        'date_ajout'
+    ];
 
     public function compte()
     {
-        return $this->belongsTo(CompteUtilisateurModel::class, 'compte_id', 'compte_id');
+        return $this->belongsTo(UserModel::class, 'compte_id', 'compte_id');
     }
 
-    public function typeMassage()
+    public function typeMassage() 
     {
         return $this->belongsTo(TypeMassageModel::class, 'type_massage_id', 'type_id');
     }
 
-    public function insertData($data)
+    public function getTotal()
     {
-        return $this->insert($data);
+        return $this->typeMassage->prix * $this->quantite;
     }
 }
