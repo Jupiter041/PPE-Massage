@@ -4,7 +4,7 @@
         <div class="booking-form-container">
             <h1 class="booking-title">Réservation de Votre Séance de Massage</h1>
             <p class="booking-description">Découvrez un moment de pure détente dans notre espace bien-être. Notre équipe de professionnels qualifiés vous accueille dans une ambiance zen et apaisante.</p>
-            
+
             <form action="<?= base_url('Reservations/create') ?>" method="POST" class="elegant-form">
                 <?= csrf_field() ?>
                 <input type="hidden" name="type_id" value="<?= isset($typeMassage) ? $typeMassage->type_id : '' ?>">
@@ -83,7 +83,7 @@
                         J'accepte les conditions générales et la politique de confidentialité
                     </label>
                 </div>
-                
+
                 <button type="submit" class="btn-submit">Confirmer ma Réservation</button>
             </form>
 

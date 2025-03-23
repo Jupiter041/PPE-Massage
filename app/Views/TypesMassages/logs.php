@@ -1,6 +1,6 @@
   <div class="conteneur">
       <h2>Logs système</h2>
-    
+
       <div class="card mb-4">
           <div class="card-body">
               <form id="filterForm">
@@ -54,13 +54,13 @@
                               <?php
                               $actionClass = '';
                               switch($log['action']) {
-                                  case 'INSERT': 
+                                  case 'INSERT':
                                       $actionClass = 'bg-success';
                                       break;
-                                  case 'UPDATE': 
+                                  case 'UPDATE':
                                       $actionClass = 'bg-warning';
                                       break;
-                                  case 'DELETE': 
+                                  case 'DELETE':
                                       $actionClass = 'bg-danger';
                                       break;
                               }

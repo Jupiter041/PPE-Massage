@@ -64,13 +64,20 @@ class ReservationsController extends Controller
                 'salle_id' => null
             ];
 
-            $reservationsModel = new ReservationsModel();
-            if ($reservationsModel->insert($data)) {
+            // Insérer dans la table en_attente
+            if ($this->reservationsModel->insertEnAttente($data)) {
                 return $this->response->setJSON(['success' => true]);
             }
 
             return $this->response->setJSON(['error' => 'Erreur lors de la création de la réservation'])->setStatusCode(500);
         }
     }
-}
 
+    public function transfererReservation($id)
+    {
+        if ($this->reservationsModel->transfererReservation($id)) {
+            return $this->response->setJSON(['success' => true]);
+        }
+        return $this->response->setJSON(['error' => 'Erreur lors du transfert de la réservation'])->setStatusCode(500);
+    }
+}

@@ -17,8 +17,9 @@ class ReservationsModel extends Model
         'salle_id',
         'type_id',
         'employe_id',
-        'compte_id',
-        'preference_praticien'
+        'preference_praticien',
+        'date_creation',
+        'compte_id'
     ];
 
     protected $dates = [
@@ -31,7 +32,7 @@ class ReservationsModel extends Model
         return $this->belongsTo(SalleModel::class, 'salle_id', 'salle_id');
     }
 
-    public function typeMassage() 
+    public function typeMassage()
     {
         return $this->belongsTo(TypeMassageModel::class, 'type_id', 'type_id')->select(['type_id', 'nom_type', 'description', 'prix']);
     }
@@ -40,8 +41,27 @@ class ReservationsModel extends Model
     {
         return $this->belongsTo(EmployeModel::class, 'employe_id', 'employe_id');
     }
+
     public function compte()
     {
         return $this->belongsTo(UserModel::class, 'compte_id', 'compte_id');
+    }
+
+    // Méthode pour insérer dans la table en_attente
+    public function insertEnAttente($data)
+    {
+        return $this->db->table('en_attente')->insert($data);
+    }
+
+    // Méthode pour transférer de en_attente à reservations
+    public function transfererReservation($id)
+    {
+        $reservation = $this->db->table('en_attente')->where('id', $id)->get()->getRowArray();
+        if ($reservation) {
+            $this->db->table('reservations')->insert($reservation);
+            $this->db->table('en_attente')->where('id', $id)->delete();
+            return true;
+        }
+        return false;
     }
 }

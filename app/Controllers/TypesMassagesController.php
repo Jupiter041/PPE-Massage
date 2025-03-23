@@ -21,28 +21,28 @@ class TypesMassagesController extends BaseController
         $this->userModel = new UserModel();
         $this->panierModel = new PanierModel();
     }
-    
+
     public function index()
     {
         // Démarrer la session
         $session = session();
-        
+
         // Initialiser la variable user à null
         $data['user'] = null;
-        
+
         // Vérifier si l'utilisateur est connecté
         if ($session->get('isLoggedIn')) {
             // Récupérer l'ID de l'utilisateur depuis la session
             $userId = $session->get('id');
-            
+
             // Rechercher l'utilisateur dans la base de données
             $user = $this->userModel->find($userId);
-            
+
             // Lever une exception si l'utilisateur n'est pas trouvé
             if (!$user) {
                 throw new \CodeIgniter\Exceptions\PageNotFoundException('User not found');
             }
-            
+
             // Stocker les données de l'utilisateur
             $data['user'] = $user;
         }
@@ -97,25 +97,25 @@ class TypesMassagesController extends BaseController
                 'description' => $this->request->getPost('description'),
                 'prix' => $this->request->getPost('prix'),
             ]);
-    
+
             $rules = [
                 'nom_type' => 'required|min_length[3]',
                 'description' => 'required',
                 'prix' => 'required|decimal',
             ];
-    
+
             $validator = \Config\Services::validation();
             if (!$validator->setRules($rules)->run($data)) {
                 return redirect()->back()->withInput()->with('errors', $validator->getErrors());
             }
-    
+
             if ($this->typeMassageModel->insert($data)) {
                 return redirect()->to('/TypesMassages')->with('success', 'Type de massage ajouté avec succès');
             } else {
                 return redirect()->back()->withInput()->with('errors', ['Erreur lors de la création du type de massage']);
             }
         }
-    
+
         echo view('TypesMassages/Templates/header');
         echo view('TypesMassages/Templates/navbar');
         echo view('TypesMassages/create');
@@ -128,7 +128,7 @@ class TypesMassagesController extends BaseController
         }
 
         $typeMassage = $this->typeMassageModel->find($id);
-    
+
         if (!$typeMassage) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException("Le type de massage avec l'ID $id n'existe pas.");
         }
@@ -204,7 +204,7 @@ class TypesMassagesController extends BaseController
             return redirect()->to(base_url('TypesMassages'))->with('message', 'Type de massage supprimé avec succès');
         }
         return redirect()->to('/TypesMassages')->with('error', 'Erreur lors de la suppression');
-    }    
+    }
     public function success()
     {
         echo view('TypesMassages/Templates/header');
@@ -220,23 +220,23 @@ class TypesMassagesController extends BaseController
         }
 
         $validation = \Config\Services::validation();
-    
+
         $rules = [
             'nom_type' => 'required|min_length[3]',
             'description' => 'required|min_length[10]',
             'prix' => 'required|decimal',
         ];
-    
+
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $validation->getErrors());
         }
-    
+
         $data = $this->sanitizeInput([
             'nom_type' => $this->request->getPost('nom_type'),
             'description' => $this->request->getPost('description'),
             'prix' => $this->request->getPost('prix'),
         ]);
-    
+
         if ($this->typeMassageModel->insert($data)) {
             return redirect()->to('/TypesMassages')->with('success', 'Type de massage ajouté avec succès');
         }

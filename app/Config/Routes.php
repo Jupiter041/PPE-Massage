@@ -47,6 +47,7 @@ $routes->get('assets/(:any)', 'Assets::serve/$1');
 // Routes pour la validation de commande
 $routes->get('Reservations', 'ValidationCommandeController::index');
 $routes->post('Reservations/create', 'ValidationCommandeController::create');
+$routes->post('Reservations/transfererReservation/(:num)', 'ReservationsController::transfererReservation/$1');
 
 // Routes pour les réservations
 $routes->get('reservations', 'ReservationsController::index');
