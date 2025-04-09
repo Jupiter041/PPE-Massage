@@ -11,13 +11,14 @@ $routes->get('/', 'TypesMassagesController::index');
 
 // Routes pour les types de massages
 $routes->get('TypesMassages', 'TypesMassagesController::index');
-$routes->get('TypesMassages/create', 'TypesMassagesController::create');
-$routes->post('TypesMassages/create', 'TypesMassagesController::store');
-$routes->get('TypesMassages/edit/(:num)', 'TypesMassagesController::edit/$1');
-$routes->post('TypesMassages/update/(:num)', 'TypesMassagesController::update/$1');
-$routes->get('TypesMassages/delete/(:num)', 'TypesMassagesController::delete/$1');
+$routes->get('TypesMassages/create', 'TypesMassagesController::create', ['filter' => 'adminGuard']);
+$routes->post('TypesMassages/create', 'TypesMassagesController::store', ['filter' => 'adminGuard']);
+$routes->get('TypesMassages/edit/(:num)', 'TypesMassagesController::edit/$1', ['filter' => 'adminGuard']);
+$routes->post('TypesMassages/update/(:num)', 'TypesMassagesController::update/$1', ['filter' => 'adminGuard']);
+$routes->get('TypesMassages/delete/(:num)', 'TypesMassagesController::delete/$1', ['filter' => 'adminGuard']);
 $routes->get('TypesMassages/success', 'TypesMassagesController::success');
 $routes->get('TypesMassages/details/(:num)', 'TypesMassagesController::details/$1');
+$routes->get('TypesMassages/en_attente/(:num)', 'EnAttenteController::index/$1', ['filter' => 'authGuard']);
 
 // Routes pour l'authentification
 $routes->get('/inscription', 'InscriptionController::index');
@@ -27,41 +28,40 @@ $routes->post('/connexion', 'ConnexionController::traiteConnexion');
 $routes->get('/deconnexion', 'ConnexionController::deconnexion');
 
 // Route pour le tableau de bord
-$routes->get('dashboard', 'DashboardController::index');
+$routes->get('dashboard', 'DashboardController::index', ['filter' => 'adminGuard']);
 
-$routes->get('/profile', 'ProfileController::index');
-$routes->get('/profile/edit', 'ProfileController::edit');
-$routes->post('/profile/update', 'ProfileController::update');
+$routes->get('/profile', 'ProfileController::index', ['filter' => 'authGuard']);
+$routes->get('/profile/edit', 'ProfileController::edit', ['filter' => 'authGuard']);
+$routes->post('/profile/update', 'ProfileController::update', ['filter' => 'authGuard']);
 
 // Routes pour le panier
-$routes->get('/panier', 'PanierController::index');
-$routes->get('/panier/ajouter/(:num)', 'PanierController::ajouter/$1');
-$routes->get('/panier/supprimer/(:num)', 'PanierController::supprimer/$1');
-$routes->get('/panier/vider', 'PanierController::vider');
-$routes->post('/panier/ajouterMultiple', 'PanierController::ajouterMultiple');
-$routes->post('/Reservation/ajouterMultiple', 'PanierController::ajouterMultiple');
+$routes->get('/panier', 'PanierController::index', ['filter' => 'authGuard']);
+$routes->get('/panier/ajouter/(:num)', 'PanierController::ajouter/$1', ['filter' => 'authGuard']);
+$routes->get('/panier/supprimer/(:num)', 'PanierController::supprimer/$1', ['filter' => 'authGuard']);
+$routes->get('/panier/vider', 'PanierController::vider', ['filter' => 'authGuard']);
+$routes->post('/panier/ajouterMultiple', 'PanierController::ajouterMultiple', ['filter' => 'authGuard']);
+
+// Routes pour les réservations
+$routes->get('reservations', 'ReservationsController::create', ['filter' => 'authGuard']);
+$routes->post('reservations/create', 'ReservationsController::create', ['filter' => 'authGuard']);
+
+// Routes pour les réservations en attente
+$routes->post('/EnAttente/create', 'EnAttenteController::create', ['filter' => 'authGuard']);
+$routes->get('/EnAttente/edit/(:num)', 'EnAttenteController::edit/$1', ['filter' => 'authGuard']);
+$routes->get('/EnAttente/deleteReservationWithPanier/(:num)', 'EnAttenteController::deleteReservationWithPanier/$1', ['filter' => 'authGuard']);
 
 // Route pour servir les fichiers CSS statiques
 $routes->get('assets/(:any)', 'Assets::serve/$1');
 
-// Routes pour la validation de commande
-$routes->get('Reservations', 'ValidationCommandeController::index');
-$routes->post('Reservations/create', 'ValidationCommandeController::create');
-$routes->post('Reservations/transfererReservation/(:num)', 'ReservationsController::transfererReservation/$1');
-
-// Routes pour les réservations
-$routes->get('reservations', 'ReservationsController::index');
-$routes->post('reservations/create', 'ReservationsController::create');
-
 // Routes pour les logs
-$routes->get('logs', 'LogsController::index');
-$routes->post('logs', 'LogsController::store');
-$routes->get('logs/(:num)', 'LogsController::show/$1');
+$routes->get('logs', 'LogsController::index', ['filter' => 'adminGuard']);
+$routes->post('logs', 'LogsController::store', ['filter' => 'adminGuard']);
+$routes->get('logs/(:num)', 'LogsController::show/$1', ['filter' => 'adminGuard']);
 
 // Ajout de la route pour gérer les erreurs 404
 $routes->set404Override('ConnexionController::show404');
 
-// Activation de l'auto-routing pour une meilleure gestion des routes 
+// Activation de l'auto-routing pour une meilleure gestion des routes
 $routes->setAutoRoute(false);
 
 // Configuration du baseURL dans .env ou Config/App.php:
@@ -69,3 +69,7 @@ $routes->setAutoRoute(false);
 
 // Routes pour l'API WebService
 $routes->get('api/schedule/(:num)', 'WebServiceController::getData/$1');
+
+$routes->get('/employe/hours', 'EmployeController::hours', ['filter' => 'adminGuard']);
+// Dans app/Config/Routes.php
+$routes->get('api/employe/(:num)/creneaux', 'EmployeController::getTimeSlots/$1');

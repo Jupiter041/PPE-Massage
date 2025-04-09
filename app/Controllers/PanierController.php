@@ -1,5 +1,8 @@
 <?php
-
+/**
+ *? Comment faire pour que les informations de chaques massage soient mise dans la bdd puis transférer vers la table reservations ?
+ * TODO: Ajouter une fonction pour stocker les données du panier dans la base de données -> utilisation de la table en_attente + changer le formulaire de /TypesMassages/panier.php
+*/
 namespace App\Controllers;
 
 use App\Models\PanierModel;
@@ -7,6 +10,8 @@ use App\Models\TypeMassageModel;
 use App\Models\ReservationsModel;
 use App\Models\UserModel;
 use App\Models\EmployeModel;
+use App\Models\EnAttenteModel;
+
 class PanierController extends BaseController
 {
     protected $panierModel;
@@ -14,6 +19,7 @@ class PanierController extends BaseController
     protected $reservationsModel;
     protected $userModel;
     protected $employeModel;
+    protected $enAttenteModel;
 
     public function __construct()
     {
@@ -22,23 +28,26 @@ class PanierController extends BaseController
         $this->reservationsModel = new ReservationsModel();
         $this->userModel = new UserModel();
         $this->employeModel = new EmployeModel();
+        $this->enAttenteModel = new EnAttenteModel();
     }
 
     public function index()
     {
         $session = session();
-        if (!$session->get('id')) {
+        if (!$session->has('id')) {
             return redirect()->to('/connexion');
         }
 
         $compteId = $session->get('id');
-        // Récupérer les articles du panier avec leurs détails
+        if (empty($compteId)) {
+            return redirect()->to('/connexion')->with('error', 'Session invalide');
+        }
+
         $panier = $this->panierModel
             ->with('typeMassage')
             ->where('compte_id', $compteId)
             ->get();
 
-        // Récupérer tous les employés
         $employes = $this->employeModel->findAll();
 
         $data = [
@@ -55,12 +64,17 @@ class PanierController extends BaseController
     public function ajouter($typeId)
     {
         $session = session();
-        if (!$session->get('id')) {
+        if (!$session->has('id')) {
             return redirect()->to('/connexion');
         }
 
+        $compteId = $session->get('id');
+        if (empty($compteId)) {
+            return redirect()->to('/connexion')->with('error', 'Session invalide');
+        }
+
         $data = [
-            'compte_id' => $session->get('id'),
+            'compte_id' => $compteId,
             'type_massage_id' => $typeId,
             'quantite' => 1,
             'date_ajout' => date('Y-m-d H:i:s')
@@ -73,78 +87,104 @@ class PanierController extends BaseController
     public function supprimer($typeId)
     {
         $session = session();
-        if (!$session->get('id')) {
+        if (!$session->has('id')) {
             return redirect()->to('/connexion');
         }
 
         $compteId = $session->get('id');
+        if (empty($compteId)) {
+            return redirect()->to('/connexion')->with('error', 'Session invalide');
+        }
+
         $this->panierModel->where('compte_id', $compteId)
-                         ->where('type_massage_id', $typeId)
-                         ->delete();
-                         
+                          ->where('type_massage_id', $typeId)
+                          ->delete();
+
         return redirect()->to('/panier')->with('success', 'Article retiré du panier');
     }
-    
+
     public function vider()
     {
         $session = session();
-        if (!$session->get('id')) {
+        if (!$session->has('id')) {
             return redirect()->to('/connexion');
         }
 
         $compteId = $session->get('id');
+        if (empty($compteId)) {
+            return redirect()->to('/connexion')->with('error', 'Session invalide');
+        }
+
         $this->panierModel->where('compte_id', $compteId)->delete();
-        
+
         return redirect()->to('/panier')->with('success', 'Panier vidé avec succès');
     }
 
     public function ajouterMultiple()
     {
         $session = session();
-        if (!$session->get('id')) {
+        if (!$session->has('id')) {
             return redirect()->to('/connexion')->with('error', 'Utilisateur non connecté');
         }
 
         $compteId = $session->get('id');
-        $reservations = explode('||', $this->request->getPost('reservations'));
-
-        if (empty($reservations)) {
-            return redirect()->to('/panier')->with('error', 'Aucune réservation fournie');
+        if (empty($compteId)) {
+            return redirect()->to('/connexion')->with('error', 'Session invalide');
         }
 
+        $panier = $this->panierModel->where('compte_id', $compteId)->findAll();
+
         try {
-            foreach ($reservations as $reservation) {
-                $reservationData = [];
-                $fields = explode('&', $reservation);
-                foreach ($fields as $field) {
-                    $keyValue = explode('=', $field);
-                    if (count($keyValue) == 2) {
-                        $reservationData[urldecode($keyValue[0])] = urldecode($keyValue[1]);
-                    }
+            foreach ($panier as $item) {
+                if (!isset($item->type_massage_id)) {
+                    throw new \Exception('ID du type de massage manquant');
                 }
 
-                $insertData = [
-                    'compte_id' => $compteId,
-                    'type_id' => $reservationData['type_massage_id'],
-                    'heure_reservation' => $reservationData['heure_reservation'],
-                    'duree' => $reservationData['duree'],
-                    'salle_id' => $reservationData['salle_id'],
-                    'employe_id' => $reservationData['employe_id'],
-                    'preference_praticien' => $reservationData['preference_praticien'] ?? null,
-                    'commentaires' => $reservationData['commentaires'] ?? null,
-                    'date_creation' => date('Y-m-d H:i:s'),
-                    'statut' => 'en_attente'
-                ];
+                $date = $this->request->getPost('heure_reservation_' . $item->type_massage_id);
+                $heure = $this->request->getPost('heure_' . $item->type_massage_id);
+
+                if (empty($date) || empty($heure)) {
+                    throw new \Exception('Date ou heure manquante');
+                }
+
+                // Validation du format de la date (YYYY-MM-DD)
+                if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date)) {
+                    throw new \Exception('Format de date invalide');
+                }
+
+                // Validation du format de l'heure (HH:MM)
+                if (!preg_match("/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/", $heure)) {
+                    throw new \Exception('Format d\'heure invalide');
+                }
+
+                $heureReservation = $date . ' ' . $heure;
                 
-                $this->reservationsModel->insert($insertData);
+                // Vérification que la date est dans le futur
+                $dateTime = new \DateTime($heureReservation);
+                $now = new \DateTime();
+                
+                if ($dateTime <= $now) {
+                    throw new \Exception('La date de réservation doit être dans le futur');
+                }
+                
+                $enAttenteData = [
+                    'compte_id' => $compteId,
+                    'type_id' => $item->type_massage_id,
+                    'duree' => $this->request->getPost('duree_' . $item->type_massage_id),
+                    'heure_reservation' => $heureReservation,
+                    'preference_praticien' => $this->request->getPost('preference_praticien_' . $item->type_massage_id),
+                    'commentaires' => $this->request->getPost('commentaires_' . $item->type_massage_id),
+                    'created_at' => date('Y-m-d H:i:s')
+                ];
+
+                $this->enAttenteModel->insert($enAttenteData);
             }
 
-            // Vider le panier après création des réservations
             $this->panierModel->where('compte_id', $compteId)->delete();
 
-            return redirect()->to('/panier')->with('success', 'Réservations enregistrées avec succès');
+            return redirect()->to('/panier')->with('success', 'Réservations en attente enregistrées avec succès');
         } catch (\Exception $e) {
-            return redirect()->to('/panier')->with('error', $e->getMessage());
+            return redirect()->to('/panier')->with('error', 'Erreur lors de l\'enregistrement des réservations: ' . $e->getMessage());
         }
     }
 }

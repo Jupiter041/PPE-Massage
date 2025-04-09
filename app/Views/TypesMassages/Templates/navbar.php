@@ -1,7 +1,6 @@
 <body>
 <nav class="main-nav">
     <ul class="nav-list">
-        <?php var_dump(base_url()); ?>
         <li class="nav-item"><a href="<?= base_url('/') ?>" class="nav-link">Accueil</a></li>
         <?php if (session()->get('isLoggedIn')): ?>
             <?php if (session()->get('role') == '1'): ?>
@@ -9,7 +8,7 @@
             <?php endif; ?>
             <li class="nav-item"><a href="<?= base_url('/deconnexion') ?>" class="nav-link">Déconnexion</a></li>
             <li class="nav-item profile-item">
-                <a href="<?= base_url('/panier') ?>" class="profile-link">
+                <a href="<?= base_url('/panier') ?>" class="panier-link">
                     <div class="profile-wrapper">
                         <img src="<?= base_url('assets/images/panier-icon.svg') ?>" alt="Panier" class="profile-icon">
                         <span class="profile-text">Panier</span>

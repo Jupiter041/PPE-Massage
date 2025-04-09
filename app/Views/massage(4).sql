@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : dim. 16 fév. 2025 à 18:13
--- Version du serveur : 10.11.6-MariaDB-0+deb12u1
--- Version de PHP : 8.2.26
+-- Généré le : sam. 05 avr. 2025 à 08:06
+-- Version du serveur : 10.11.11-MariaDB-0+deb12u1
+-- Version de PHP : 8.2.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -124,6 +124,25 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `en_attente`
+--
+
+CREATE TABLE `en_attente` (
+  `en_attente_id` int(11) NOT NULL,
+  `compte_id` int(11) NOT NULL,
+  `type_id` int(11) NOT NULL,
+  `duree` int(11) NOT NULL,
+  `heure_reservation` datetime NOT NULL,
+  `salle_id` int(11) DEFAULT NULL,
+  `employe_id` int(11) DEFAULT NULL,
+  `preference_praticien` char(1) DEFAULT NULL,
+  `commentaires` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `logs`
 --
 
@@ -201,7 +220,8 @@ INSERT INTO `logs` (`log_id`, `table_name`, `action`, `description`, `date_log`)
 (59, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 23', '2025-02-16 16:24:16'),
 (60, 'panier', 'DELETE', 'Article supprimé du panier - ID: 21', '2025-02-16 16:24:20'),
 (61, 'panier', 'DELETE', 'Article supprimé du panier - ID: 23', '2025-02-16 16:24:25'),
-(62, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 24', '2025-02-16 16:24:28');
+(62, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 24', '2025-02-16 16:24:28'),
+(100, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 100', '2025-04-05 08:03:59');
 
 -- --------------------------------------------------------
 
@@ -222,9 +242,11 @@ CREATE TABLE `panier` (
 --
 
 INSERT INTO `panier` (`panier_id`, `compte_id`, `type_massage_id`, `quantite`, `date_ajout`) VALUES
+(1, 1, 3, 1, '2025-04-01 12:22:38'),
 (14, 10, 3, 1, '2025-02-02 19:21:53'),
 (15, 10, 43, 1, '2025-02-02 19:21:57'),
-(24, 1, 1, 1, '2025-02-16 15:24:28');
+(24, 1, 1, 1, '2025-02-16 15:24:28'),
+(100, 1, 2, 1, '2025-04-05 06:03:59');
 
 --
 -- Déclencheurs `panier`
@@ -286,26 +308,8 @@ INSERT INTO `reservations` (`reservation_id`, `heure_reservation`, `commentaires
 DELIMITER $$
 CREATE TRIGGER `after_reservation_insert` AFTER INSERT ON `reservations` FOR EACH ROW BEGIN
     DELETE FROM panier 
-    WHERE compte_id = (SELECT compte_id FROM clients WHERE client_id = NEW.client_id)
+    WHERE compte_id = NEW.compte_id
     AND type_massage_id = NEW.type_id;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `before_client_reservation_insert` BEFORE INSERT ON `reservations` FOR EACH ROW BEGIN
-    DECLARE count_client INT;
-    
-    SELECT COUNT(*) INTO count_client
-    FROM reservations 
-    WHERE client_id = NEW.client_id 
-    AND DATE(heure_reservation) = DATE(NEW.heure_reservation)
-    AND ((heure_reservation BETWEEN NEW.heure_reservation AND DATE_ADD(NEW.heure_reservation, INTERVAL NEW.duree MINUTE))
-    OR (DATE_ADD(heure_reservation, INTERVAL duree MINUTE) BETWEEN NEW.heure_reservation AND DATE_ADD(NEW.heure_reservation, INTERVAL NEW.duree MINUTE)));
-    
-    IF count_client > 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Le client a déjà une réservation sur ce créneau horaire';
-    END IF;
 END
 $$
 DELIMITER ;
@@ -360,27 +364,6 @@ CREATE TRIGGER `before_reservation_update` BEFORE UPDATE ON `reservations` FOR E
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Impossible de modifier une réservation passée';
     END IF;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `log_after_delete_reservation` AFTER DELETE ON `reservations` FOR EACH ROW BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('reservations', 'DELETE', CONCAT('Réservation supprimée - ID: ', OLD.reservation_id, ' - Client ID: ', OLD.client_id));
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `log_after_insert_reservation` AFTER INSERT ON `reservations` FOR EACH ROW BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('reservations', 'INSERT', CONCAT('Nouvelle réservation - ID: ', NEW.reservation_id, ' - Client ID: ', NEW.client_id));
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `log_after_update_reservation` AFTER UPDATE ON `reservations` FOR EACH ROW BEGIN
-    INSERT INTO logs (table_name, action, description)
-    VALUES ('reservations', 'UPDATE', CONCAT('Réservation modifiée - ID: ', NEW.reservation_id, ' - Client ID: ', NEW.client_id));
 END
 $$
 DELIMITER ;
@@ -505,6 +488,14 @@ ALTER TABLE `employe`
   ADD UNIQUE KEY `compte_id` (`compte_id`);
 
 --
+-- Index pour la table `en_attente`
+--
+ALTER TABLE `en_attente`
+  ADD PRIMARY KEY (`en_attente_id`),
+  ADD KEY `compte_id` (`compte_id`),
+  ADD KEY `type_id` (`type_id`);
+
+--
 -- Index pour la table `logs`
 --
 ALTER TABLE `logs`
@@ -548,43 +539,49 @@ ALTER TABLE `types_massages`
 -- AUTO_INCREMENT pour la table `comptes_utilisateurs`
 --
 ALTER TABLE `comptes_utilisateurs`
-  MODIFY `compte_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `compte_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- AUTO_INCREMENT pour la table `employe`
 --
 ALTER TABLE `employe`
-  MODIFY `employe_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `employe_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+
+--
+-- AUTO_INCREMENT pour la table `en_attente`
+--
+ALTER TABLE `en_attente`
+  MODIFY `en_attente_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- AUTO_INCREMENT pour la table `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- AUTO_INCREMENT pour la table `panier`
 --
 ALTER TABLE `panier`
-  MODIFY `panier_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `panier_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- AUTO_INCREMENT pour la table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- AUTO_INCREMENT pour la table `Salle`
 --
 ALTER TABLE `Salle`
-  MODIFY `salle_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `salle_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- AUTO_INCREMENT pour la table `types_massages`
 --
 ALTER TABLE `types_massages`
-  MODIFY `type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- Contraintes pour les tables déchargées
@@ -594,14 +591,24 @@ ALTER TABLE `types_massages`
 -- Contraintes pour la table `employe`
 --
 ALTER TABLE `employe`
-  ADD CONSTRAINT `employe_ibfk_1` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`);
+  ADD CONSTRAINT `employe_ibfk_1` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`),
+  ADD CONSTRAINT `employe_ibfk_2` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`);
+
+--
+-- Contraintes pour la table `en_attente`
+--
+ALTER TABLE `en_attente`
+  ADD CONSTRAINT `en_attente_ibfk_1` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `en_attente_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `types_massages` (`type_id`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `panier`
 --
 ALTER TABLE `panier`
   ADD CONSTRAINT `panier_ibfk_1` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`),
-  ADD CONSTRAINT `panier_ibfk_2` FOREIGN KEY (`type_massage_id`) REFERENCES `types_massages` (`type_id`);
+  ADD CONSTRAINT `panier_ibfk_2` FOREIGN KEY (`type_massage_id`) REFERENCES `types_massages` (`type_id`),
+  ADD CONSTRAINT `panier_ibfk_3` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`),
+  ADD CONSTRAINT `panier_ibfk_4` FOREIGN KEY (`type_massage_id`) REFERENCES `types_massages` (`type_id`);
 
 --
 -- Contraintes pour la table `reservations`
@@ -610,9 +617,19 @@ ALTER TABLE `reservations`
   ADD CONSTRAINT `reservations_ibfk_1` FOREIGN KEY (`salle_id`) REFERENCES `Salle` (`salle_id`),
   ADD CONSTRAINT `reservations_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `types_massages` (`type_id`),
   ADD CONSTRAINT `reservations_ibfk_3` FOREIGN KEY (`employe_id`) REFERENCES `employe` (`employe_id`),
-  ADD CONSTRAINT `reservations_ibfk_4` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`);
+  ADD CONSTRAINT `reservations_ibfk_4` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`),
+  ADD CONSTRAINT `reservations_ibfk_5` FOREIGN KEY (`salle_id`) REFERENCES `Salle` (`salle_id`),
+  ADD CONSTRAINT `reservations_ibfk_6` FOREIGN KEY (`type_id`) REFERENCES `types_massages` (`type_id`),
+  ADD CONSTRAINT `reservations_ibfk_7` FOREIGN KEY (`employe_id`) REFERENCES `employe` (`employe_id`),
+  ADD CONSTRAINT `reservations_ibfk_8` FOREIGN KEY (`compte_id`) REFERENCES `comptes_utilisateurs` (`compte_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+-- Ajout d'une colonne panier_id dans la table en_attente
+ALTER TABLE `en_attente` 
+ADD COLUMN `panier_id` int(11),
+ADD CONSTRAINT `en_attente_ibfk_3` FOREIGN KEY (`panier_id`) REFERENCES `panier` (`panier_id`) ON DELETE CASCADE;
