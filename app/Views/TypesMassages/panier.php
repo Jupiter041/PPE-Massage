@@ -33,7 +33,7 @@
                         <td class="cart-total"><?= $item->getTotal() ?> €</td>
                         <td class="cart-actions">
                             <a href="<?= base_url('TypesMassages/en_attente/' . $item->type_massage_id) ?>" class="btn btn-primary">Réserver</a>
-                            <a href="<?= base_url('panier/supprimer/' . $item->type_massage_id) ?>" class="btn btn-remove" onclick="return confirm('Êtes-vous sûr de vouloir retirer cet article du panier ?');">
+                            <a href="<?= base_url('panier/supprimer/' . $item->panier_id) ?>" class="btn btn-remove" onclick="return confirm('Êtes-vous sûr de vouloir retirer cet article du panier ?');">
                                 Retirer
                             </a>
                         </td>

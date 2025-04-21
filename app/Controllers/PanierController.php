@@ -78,7 +78,7 @@ class PanierController extends BaseController
         return redirect()->to('/panier')->with('success', 'Article ajouté au panier');
     }
 
-    public function supprimer($typeId)
+    public function supprimer($panierId)
     {
         $session = session();
         if (!$session->has('id')) {
@@ -91,12 +91,11 @@ class PanierController extends BaseController
         }
 
         PanierModel::where('compte_id', $compteId)
-            ->where('type_massage_id', $typeId)
+            ->where('panier_id', $panierId)
             ->delete();
 
         return redirect()->to('/panier')->with('success', 'Article retiré du panier');
     }
-
     public function vider()
     {
         $session = session();
