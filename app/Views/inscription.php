@@ -11,15 +11,6 @@
         <label for="nom_utilisateur">Nom d'utilisateur</label>
         <input type="text" id="nom_utilisateur" name="nom_utilisateur" value="<?= set_value('nom_utilisateur') ?>" required>
 
-        <label for="nom">Nom</label>
-        <input type="text" id="nom" name="nom" value="<?= set_value('nom') ?>" required>
-
-        <label for="prenom">Prénom</label>
-        <input type="text" id="prenom" name="prenom" value="<?= set_value('prenom') ?>" required>
-
-        <label for="telephone">Téléphone</label>
-        <input type="tel" id="telephone" name="telephone" value="<?= set_value('telephone') ?>" required>
-
         <label for="email">Email</label>
         <input type="email" id="email" name="email" value="<?= set_value('email') ?>" required>
 
@@ -28,6 +19,8 @@
 
         <label for="confirmpassword">Confirmer le mot de passe</label>
         <input type="password" id="confirmpassword" name="confirmpassword" required>
+
+        <input type="hidden" name="role" value="3">
 
         <button type="submit" class="btn">S'inscrire</button>
     </form>

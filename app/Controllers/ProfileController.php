@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ProfileController extends BaseController
 {
@@ -14,17 +15,16 @@ class ProfileController extends BaseController
         }
 
         $userId = $session->get('id');
-        $userModel = new UserModel();
-        $user = $userModel->find($userId);
-
-        if (!$user) {
+        try {
+            $user = UserModel::findOrFail($userId);
+        } catch (ModelNotFoundException $e) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('User not found');
         }
 
         $data = [
             'user' => $user
         ];
-//test3
+
         echo view('TypesMassages/Templates/header');
         echo view('TypesMassages/Templates/navbar');
         echo view('profile', $data);
@@ -39,10 +39,9 @@ class ProfileController extends BaseController
         }
 
         $userId = $session->get('id');
-        $userModel = new UserModel();
-        $user = $userModel->find($userId);
-
-        if (!$user) {
+        try {
+            $user = UserModel::findOrFail($userId);
+        } catch (ModelNotFoundException $e) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('User not found');
         }
 
@@ -65,10 +64,9 @@ class ProfileController extends BaseController
         }
 
         $userId = $session->get('id');
-        $userModel = new UserModel();
-        $user = $userModel->find($userId);
-
-        if (!$user) {
+        try {
+            $user = UserModel::findOrFail($userId);
+        } catch (ModelNotFoundException $e) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Utilisateur non trouvé');
         }
 
@@ -105,9 +103,10 @@ class ProfileController extends BaseController
                 return redirect()->back()->withInput()->with('validation', $this->validator);
             }
 
-            if ($userModel->where('compte_id', $userId)->update($data)) {
+            try {
+                $user->update($data);
                 return redirect()->to('/profile')->with('success', 'Profil mis à jour avec succès');
-            } else {
+            } catch (\Exception $e) {
                 return redirect()->back()->withInput()->with('error', 'Échec de la mise à jour du profil');
             }
         }

@@ -4,6 +4,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="<?= base_url('logs') ?>"><i class="fas fa-history"></i> Logs</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<?= base_url('admin/employes') ?>"><i class="fas fa-user-plus"></i> Créer un compte employé</a>
+            </li>
         </ul>
     </div>
 </nav>

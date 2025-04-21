@@ -31,4 +31,9 @@ class PanierModel extends Model
     {
         return $this->typeMassage->prix * $this->quantite;
     }
+
+    public function en_attente()
+    {
+        return $this->hasOne(EnAttenteModel::class, 'panier_id');
+    }
 }

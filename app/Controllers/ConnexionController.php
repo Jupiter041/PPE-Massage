@@ -16,15 +16,14 @@ class ConnexionController extends BaseController {
         $email = $this->request->getVar('email');
         $password = $this->request->getVar('password');
 
-        $userModel = new UserModel();
-        $user = $userModel->where('email', $email)->first();
+        $user = UserModel::where('email', $email)->first();
         if ($user) {
-            if (password_verify($password, $user['mot_de_passe'])) {
+            if (password_verify($password, $user->mot_de_passe)) {
                 $session->set([
-                    'id' => $user['compte_id'],
-                    'name' => $user['nom_utilisateur'],
-                    'email' => $user['email'],
-                    'role' => $user['role'],
+                    'id' => $user->compte_id,
+                    'name' => $user->nom_utilisateur,
+                    'email' => $user->email,
+                    'role' => $user->role,
                     'isLoggedIn' => true
                 ]);
                 return redirect()->to('/profile');

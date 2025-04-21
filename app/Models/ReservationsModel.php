@@ -53,4 +53,32 @@ class ReservationsModel extends Model
     {
         return $this->belongsTo(UserModel::class, 'compte_id', 'compte_id');
     }
-}
+    public function getReservedTimeSlots($date)
+    {
+        return $this->whereRaw('DATE(heure_reservation) = ?', [$date])
+                    ->select(['heure_reservation', 'duree'])
+                    ->get()
+                    ->toArray();
+    }
+    
+    public function isTimeSlotAvailable($date, $time, $duration, $clientId = null)
+    {
+        $startTime = "$date $time";
+        $endTime = date('Y-m-d H:i:s', strtotime($startTime) + ($duration * 60));
+        
+        // Vérifier les conflits avec les réservations existantes pour le même client
+        $query = $this->where('compte_id', $clientId)
+                     ->whereRaw('heure_reservation < ?', [$endTime])
+                     ->whereRaw('DATE_ADD(heure_reservation, INTERVAL duree MINUTE) > ?', [$startTime]);
+        
+        // Si un clientId est fourni, on vérifie seulement ses propres réservations
+        if ($clientId) {
+            return $query->count() === 0;
+        }
+        
+        // Sinon, vérifier pour tous les clients (pour l'admin par exemple)
+        return $this->whereRaw('heure_reservation < ?', [$endTime])
+                   ->whereRaw('DATE_ADD(heure_reservation, INTERVAL duree MINUTE) > ?', [$startTime])
+                   ->count() === 0;
+    }}
+    

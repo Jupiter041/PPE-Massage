@@ -1,8 +1,4 @@
 <?php
-/**
- *? Comment faire pour que les informations de chaques massage soient mise dans la bdd puis transférer vers la table reservations ?
- * TODO: Ajouter une fonction pour stocker les données du panier dans la base de données -> utilisation de la table en_attente + changer le formulaire de /TypesMassages/panier.php
-*/
 namespace App\Controllers;
 
 use App\Models\PanierModel;
@@ -43,12 +39,11 @@ class PanierController extends BaseController
             return redirect()->to('/connexion')->with('error', 'Session invalide');
         }
 
-        $panier = $this->panierModel
-            ->with('typeMassage')
+        $panier = PanierModel::with('typeMassage')
             ->where('compte_id', $compteId)
             ->get();
 
-        $employes = $this->employeModel->findAll();
+        $employes = EmployeModel::findAll();
 
         $data = [
             'title' => 'Mon Panier',
@@ -73,14 +68,13 @@ class PanierController extends BaseController
             return redirect()->to('/connexion')->with('error', 'Session invalide');
         }
 
-        $data = [
+        PanierModel::create([
             'compte_id' => $compteId,
             'type_massage_id' => $typeId,
             'quantite' => 1,
             'date_ajout' => date('Y-m-d H:i:s')
-        ];
+        ]);
 
-        $this->panierModel->insertData($data);
         return redirect()->to('/panier')->with('success', 'Article ajouté au panier');
     }
 
@@ -96,9 +90,9 @@ class PanierController extends BaseController
             return redirect()->to('/connexion')->with('error', 'Session invalide');
         }
 
-        $this->panierModel->where('compte_id', $compteId)
-                          ->where('type_massage_id', $typeId)
-                          ->delete();
+        PanierModel::where('compte_id', $compteId)
+            ->where('type_massage_id', $typeId)
+            ->delete();
 
         return redirect()->to('/panier')->with('success', 'Article retiré du panier');
     }
@@ -115,7 +109,7 @@ class PanierController extends BaseController
             return redirect()->to('/connexion')->with('error', 'Session invalide');
         }
 
-        $this->panierModel->where('compte_id', $compteId)->delete();
+        PanierModel::where('compte_id', $compteId)->delete();
 
         return redirect()->to('/panier')->with('success', 'Panier vidé avec succès');
     }
@@ -132,7 +126,7 @@ class PanierController extends BaseController
             return redirect()->to('/connexion')->with('error', 'Session invalide');
         }
 
-        $panier = $this->panierModel->where('compte_id', $compteId)->findAll();
+        $panier = PanierModel::where('compte_id', $compteId)->get();
 
         try {
             foreach ($panier as $item) {
@@ -147,19 +141,16 @@ class PanierController extends BaseController
                     throw new \Exception('Date ou heure manquante');
                 }
 
-                // Validation du format de la date (YYYY-MM-DD)
                 if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date)) {
                     throw new \Exception('Format de date invalide');
                 }
 
-                // Validation du format de l'heure (HH:MM)
                 if (!preg_match("/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/", $heure)) {
                     throw new \Exception('Format d\'heure invalide');
                 }
 
                 $heureReservation = $date . ' ' . $heure;
                 
-                // Vérification que la date est dans le futur
                 $dateTime = new \DateTime($heureReservation);
                 $now = new \DateTime();
                 
@@ -167,7 +158,7 @@ class PanierController extends BaseController
                     throw new \Exception('La date de réservation doit être dans le futur');
                 }
                 
-                $enAttenteData = [
+                EnAttenteModel::create([
                     'compte_id' => $compteId,
                     'type_id' => $item->type_massage_id,
                     'duree' => $this->request->getPost('duree_' . $item->type_massage_id),
@@ -175,12 +166,10 @@ class PanierController extends BaseController
                     'preference_praticien' => $this->request->getPost('preference_praticien_' . $item->type_massage_id),
                     'commentaires' => $this->request->getPost('commentaires_' . $item->type_massage_id),
                     'created_at' => date('Y-m-d H:i:s')
-                ];
-
-                $this->enAttenteModel->insert($enAttenteData);
+                ]);
             }
 
-            $this->panierModel->where('compte_id', $compteId)->delete();
+            PanierModel::where('compte_id', $compteId)->delete();
 
             return redirect()->to('/panier')->with('success', 'Réservations en attente enregistrées avec succès');
         } catch (\Exception $e) {

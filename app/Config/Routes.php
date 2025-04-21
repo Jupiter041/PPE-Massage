@@ -27,6 +27,9 @@ $routes->get('/connexion', 'ConnexionController::index');
 $routes->post('/connexion', 'ConnexionController::traiteConnexion');
 $routes->get('/deconnexion', 'ConnexionController::deconnexion');
 
+// Routes pour l'API JWT
+$routes->post('auth/login', 'AuthController::login');
+
 // Route pour le tableau de bord
 $routes->get('dashboard', 'DashboardController::index', ['filter' => 'adminGuard']);
 
@@ -43,7 +46,7 @@ $routes->post('/panier/ajouterMultiple', 'PanierController::ajouterMultiple', ['
 
 // Routes pour les réservations
 $routes->get('reservations', 'ReservationsController::create', ['filter' => 'authGuard']);
-$routes->post('reservations/create', 'ReservationsController::create', ['filter' => 'authGuard']);
+$routes->get('reservations/create', 'ReservationsController::create', ['filter' => 'authGuard']);
 
 // Routes pour les réservations en attente
 $routes->post('/EnAttente/create', 'EnAttenteController::create', ['filter' => 'authGuard']);
@@ -58,18 +61,23 @@ $routes->get('logs', 'LogsController::index', ['filter' => 'adminGuard']);
 $routes->post('logs', 'LogsController::store', ['filter' => 'adminGuard']);
 $routes->get('logs/(:num)', 'LogsController::show/$1', ['filter' => 'adminGuard']);
 
-// Ajout de la route pour gérer les erreurs 404
-$routes->set404Override('ConnexionController::show404');
+// Routes pour la création d'employé
+$routes->get('/admin/employes', 'CreateEmployeController::index', ['filter' => 'adminGuard']);
+$routes->post('/employee/create', 'CreateEmployeController::create', ['filter' => 'adminGuard']);
 
-// Activation de l'auto-routing pour une meilleure gestion des routes
+// Ajout de la route pour gérer les erreurs 404
+//$routes->set404Override('ConnexionController::show404');
+
+// Désactiver l'auto-routage
 $routes->setAutoRoute(false);
 
-// Configuration du baseURL dans .env ou Config/App.php:
-// base_url = 'http://localhost/~jupiter/PPE-Massage/public/'
-
 // Routes pour l'API WebService
-$routes->get('api/schedule/(:num)', 'WebServiceController::getData/$1');
+$routes->get('api/schedule/(:num)', 'WebServiceController::getData/$1', ['filter' => 'jwt']);
+$routes->get('api/comments', 'WebServiceController::getComments', ['filter' => 'jwt']);
+$routes->get('api/comments/(:num)', 'WebServiceController::getComments/$1', ['filter' => 'jwt']);
+$routes->get('api/employe/(:num)/creneaux', 'EmployeController::getTimeSlots/$1', ['filter' => 'jwt']);
 
-$routes->get('/employe/hours', 'EmployeController::hours', ['filter' => 'adminGuard']);
-// Dans app/Config/Routes.php
-$routes->get('api/employe/(:num)/creneaux', 'EmployeController::getTimeSlots/$1');
+//$routes->get('/employe/hours', 'EmployeController::hours', ['filter' => 'adminGuard']);
+
+// Routes pour creneaux disponibles
+$routes->get('EnAttente/getAvailableSlots', 'EnAttenteController::getAvailableSlots');

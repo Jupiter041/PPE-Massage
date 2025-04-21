@@ -24,12 +24,12 @@ class ReservationsController extends BaseController
         $reservationsModel = new ReservationsModel();
         
         // Récupérer tous les articles du panier de l'utilisateur connecté
-        $panierItems = $panierModel->where('compte_id', session()->get('id'))->get();
+        $panierItems = PanierModel::where('compte_id', session()->get('id'))->get();
         
         // Vérifier si tous les articles ont des réservations en attente
         $incompletItems = [];
         foreach ($panierItems as $item) {
-            $enAttente = $enAttenteModel->where('panier_id', $item->panier_id)->first();
+            $enAttente = EnAttenteModel::where('panier_id', $item->panier_id)->first();
             if (!$enAttente) {
                 $incompletItems[] = $item->typeMassage->nom_type;
             }
@@ -41,11 +41,11 @@ class ReservationsController extends BaseController
 
         // Transférer les réservations en attente vers les réservations confirmées
         foreach ($panierItems as $item) {
-            $enAttente = $enAttenteModel->where('panier_id', $item->panier_id)->first();
+            $enAttente = EnAttenteModel::where('panier_id', $item->panier_id)->first();
             
             if ($enAttente) {
                 // Créer la réservation
-                $reservationsModel->create([
+                ReservationsModel::create([
                     'heure_reservation' => $enAttente->heure_reservation,
                     'commentaires' => $enAttente->commentaires,
                     'duree' => $enAttente->duree,
@@ -57,10 +57,10 @@ class ReservationsController extends BaseController
                 ]);
                 
                 // Supprimer l'entrée en attente
-                $enAttenteModel->delete($enAttente->en_attente_id);
+                $enAttente->delete();
                 
                 // Supprimer l'article du panier
-                $panierModel->delete($item->panier_id);
+                $item->delete();
             }
         }
         

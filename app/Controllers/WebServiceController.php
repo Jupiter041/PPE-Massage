@@ -14,36 +14,60 @@ class WebServiceController extends BaseController
     public function getData($id = null)
     {
         $employeId = $id;
-        $reservationModel = new ReservationsModel();
         
-        $employe = (new EmployeModel())->find($employeId);
+        $employe = EmployeModel::find($employeId);
         if (!$employe) {
             return $this->fail('Employé non trouvé', 404);
         }
 
-        $reservations = $reservationModel
-            ->where('employe_id', $employeId)
-            ->with(['typeMassage'])
+        $reservations = ReservationsModel::where('employe_id', $employeId)
+            ->with(['typeMassage', 'salle'])
             ->orderBy('heure_reservation', 'ASC')
             ->get();
 
-        if (!$reservations) {
+        if ($reservations->isEmpty()) {
             return $this->respondNoContent();
         }
 
-        $typeMassageModel = new TypeMassageModel();
-        $data = array_map(function($reservation) use ($typeMassageModel) {
-            $typeMassage = $typeMassageModel->find($reservation['type_id']);
-            $dateTime = new \DateTime($reservation['heure_reservation']);
+        $data = $reservations->map(function($reservation) {
+            $dateTime = new \DateTime($reservation->heure_reservation);
+            $heureFinDateTime = clone $dateTime;
+            $heureFinDateTime->modify('+' . $reservation->duree . ' minutes');
+            
             return [
-                // 'date_heure' => $dateTime->format('Y-m-d H:i:s'),
+                'reservation_id' => $reservation->reservation_id,
                 'date' => $dateTime->format('Y-m-d'),
                 'heure' => $dateTime->format('H:i'),
+                'heure_fin' => $heureFinDateTime->format('H:i'),
                 'jour_semaine' => $dateTime->format('N'),
-                'nom_massage' => $typeMassage ? $typeMassage->nom_type : null
+                'nom_massage' => $reservation->typeMassage ? $reservation->typeMassage->nom_type : null,
+                'salle_id' => $reservation->salle_id,
+                'duree' => $reservation->duree
             ];
-        }, $reservations->toArray());
+        });
 
         return $this->respond($data);
+    }
+
+    public function getComments($id = null) 
+    {
+        if ($id) {
+            $reservation = ReservationsModel::find($id);
+            if (!$reservation) {
+                return $this->fail('Réservation non trouvée', 404);
+            }
+            return $this->respond(['commentaires' => $reservation->commentaires]);
+        }
+
+        $reservations = ReservationsModel::select('reservation_id', 'commentaires', 'heure_reservation')
+            ->whereNotNull('commentaires')
+            ->orderBy('heure_reservation', 'DESC')
+            ->get();
+
+        if ($reservations->isEmpty()) {
+            return $this->respondNoContent();
+        }
+
+        return $this->respond($reservations);
     }
 }

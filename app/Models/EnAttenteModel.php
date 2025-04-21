@@ -23,11 +23,6 @@ class EnAttenteModel extends Model
         'panier_id'
     ];
 
-    public function findAllAsObjects()
-    {
-        return $this->all();
-    }
-
     public function compte()
     {
         return $this->belongsTo(UserModel::class, 'compte_id', 'compte_id');
@@ -59,10 +54,24 @@ class EnAttenteModel extends Model
     }
 
     public function createFromCart($data) {
-        return $this->create($data);
+        return self::create($data);
     }
     
     public function getAllPendingReservations() {
-        return $this->orderBy('created_at', 'ASC')->findAll();
+        return self::orderBy('created_at', 'ASC')->get();
+    }
+
+    public function updatePendingReservation($panierId, $data) {
+        // Vérifie si une entrée existe déjà pour ce panier
+        $existing = self::where('panier_id', $panierId)->first();
+        
+        if ($existing) {
+            // Met à jour l'entrée existante
+            return $existing->update($data);
+        } else {
+            // Crée une nouvelle entrée si elle n'existe pas
+            $data['panier_id'] = $panierId;
+            return self::create($data);
+        }
     }
 }

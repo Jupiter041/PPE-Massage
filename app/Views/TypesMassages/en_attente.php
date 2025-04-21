@@ -9,61 +9,50 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="heure_reservation">Date Souhaitée</label>
-                <input type="date" id="heure_reservation" name="heure_reservation" class="form-control" required>
+                <input type="date" id="heure_reservation" name="heure_reservation" class="form-control" required
+                        min="<?= date('Y-m-d') ?>"
+                        value="<?= isset($reservation) ? date('Y-m-d', strtotime($reservation->heure_reservation)) : '' ?>">
             </div>
 
-            <div class="form-group">
-                <label for="heure">Horaire Souhaité</label>
-                <input type="time" id="heure" name="heure" class="form-control" min="09:00" max="20:00" required>
-                <small class="form-text text-muted">Horaires d'ouverture : 9h - 20h</small>
-            </div>
-        </div>
-
-        <div class="form-row">
             <div class="form-group">
                 <label for="duree">Durée de la Séance</label>
                 <select id="duree" name="duree" class="form-control" required>
                     <option value="">Sélectionnez la durée...</option>
-                    <option value="30">30 minutes - Massage Express</option>
-                    <option value="60">60 minutes - Massage Classique</option>
-                    <option value="90">90 minutes - Massage Premium</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="salle_id">Salle</label>
-                <select id="salle_id" name="salle_id" class="form-control" required>
-                    <option value="">Sélectionnez une salle...</option>
-                    <option value="1">Salle de massage 1</option>
-                    <option value="2">Salle de massage 2</option>
-                    <option value="3">Salle de massage 3</option>
+                    <option value="30" <?= isset($reservation) && $reservation->duree == 30 ? 'selected' : '' ?>>30 minutes</option>
+                    <option value="60" <?= isset($reservation) && $reservation->duree == 60 ? 'selected' : '' ?>>60 minutes</option>
+                    <option value="90" <?= isset($reservation) && $reservation->duree == 90 ? 'selected' : '' ?>>90 minutes</option>
                 </select>
             </div>
         </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label for="employe_id">Praticien</label>
-                <select id="employe_id" name="employe_id" class="form-control" required>
-                    <option value="">Sélectionnez un praticien...</option>
-                    <option value="1">Employe 1</option>
-                    <option value="2">Employe 2</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="heure">Horaire Souhaité</label>
+            <select id="heure" name="heure" class="form-control" required <?= !isset($reservation) ? 'disabled' : '' ?>>
+                <?php if (isset($reservation)): ?>
+                    <option value="<?= date('H:i', strtotime($reservation->heure_reservation)) ?>" selected>
+                        <?= date('H:i', strtotime($reservation->heure_reservation)) ?>
+                    </option>
+                <?php else: ?>
+                    <option value="">Sélectionnez d'abord une date et une durée</option>
+                <?php endif; ?>
+            </select>
+            <small class="form-text text-muted">Horaires d'ouverture : 9h - 20h</small>
+        </div>
 
+        <div class="form-row">
             <div class="form-group">
                 <label for="preference_praticien">Préférence Praticien(ne)</label>
                 <select id="preference_praticien" name="preference_praticien" class="form-control">
                     <option value="">Sans préférence</option>
-                    <option value="F">Praticienne</option>
-                    <option value="H">Praticien</option>
+                    <option value="F" <?= isset($reservation) && $reservation->preference_praticien == 'F' ? 'selected' : '' ?>>Praticienne</option>
+                    <option value="H" <?= isset($reservation) && $reservation->preference_praticien == 'H' ? 'selected' : '' ?>>Praticien</option>
                 </select>
             </div>
         </div>
 
         <div class="form-group full-width">
             <label for="commentaires">Informations Complémentaires</label>
-            <textarea id="commentaires" name="commentaires" class="form-control" rows="5" placeholder="Merci de nous informer de toute condition médicale particulière, zones à éviter, ou préférences spécifiques pour votre massage..."></textarea>
+            <textarea id="commentaires" name="commentaires" class="form-control" rows="5"><?= isset($reservation) ? esc($reservation->commentaires) : '' ?></textarea>
         </div>
 
         <div class="form-group full-width">
@@ -74,9 +63,70 @@
             </label>
         </div>
 
-        <button type="submit" class="btn btn-primary">Confirmer ma Réservation</button>
+        <button type="submit" class="btn btn-primary">
+            <?= isset($reservation) ? 'Mettre à jour la réservation' : 'Confirmer ma Réservation' ?>
+        </button>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    <?php if (isset($reservation)): ?>
+        // Si une réservation existe, activez le champ heure
+        document.getElementById('heure').disabled = false;
+    <?php endif; ?>
+
+    const dateInput = document.getElementById('heure_reservation');
+    const durationSelect = document.getElementById('duree');
+    const timeSelect = document.getElementById('heure');
+    
+    function updateTimeSlots() {
+        const selectedDate = dateInput.value;
+        const selectedDuration = durationSelect.value;
+        
+        if (!selectedDate || !selectedDuration) {
+            timeSelect.innerHTML = '<option value="">Sélectionnez d\'abord une date et une durée</option>';
+            timeSelect.disabled = true;
+            return;
+        }
+        
+        // Afficher un indicateur de chargement
+        timeSelect.innerHTML = '<option value="">Chargement des créneaux...</option>';
+        timeSelect.disabled = true;
+        
+        // Faire la requête AJAX
+        fetch(`<?= base_url('EnAttente/getAvailableSlots') ?>?date=${selectedDate}&duration=${selectedDuration}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Erreur réseau');
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    timeSelect.innerHTML = `<option value="">${data.error}</option>`;
+                    return;
+                }
+                
+                if (data.slots.length === 0) {
+                    timeSelect.innerHTML = '<option value="">Aucun créneau disponible pour cette durée</option>';
+                } else {
+                    timeSelect.innerHTML = '<option value="">Sélectionnez un horaire</option>';
+                    data.slots.forEach(slot => {
+                        timeSelect.innerHTML += `<option value="${slot}">${slot}</option>`;
+                    });
+                    timeSelect.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                timeSelect.innerHTML = '<option value="">Erreur lors du chargement</option>';
+            });
+    }
+    
+    // Écouter les changements sur la date et la durée
+    dateInput.addEventListener('change', updateTimeSlots);
+    durationSelect.addEventListener('change', updateTimeSlots);
+});
+</script>
 
 <style>
 .elegant-form {
@@ -145,7 +195,3 @@
     font-size: 0.875rem;
 }
 </style>
-
-<script>
-document.getElementById('heure_reservation').min = new Date().toISOString().split('T')[0];
-</script>

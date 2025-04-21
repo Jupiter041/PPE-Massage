@@ -10,5 +10,23 @@ class UserModel extends Model
     protected $fillable = ['nom_utilisateur', 'mot_de_passe', 'role', 'email'];
     public $timestamps = false;
 
+    public function employe()
+    {
+        return $this->hasOne(EmployeModel::class, 'compte_id', 'compte_id');
+    }
 
+    public function reservations()
+    {
+        return $this->hasMany(ReservationsModel::class, 'compte_id', 'compte_id');
+    }
+
+    public function panier()
+    {
+        return $this->hasMany(PanierModel::class, 'compte_id', 'compte_id');
+    }
+
+    public function enAttente()
+    {
+        return $this->hasMany(EnAttenteModel::class, 'compte_id', 'compte_id');
+    }
 }

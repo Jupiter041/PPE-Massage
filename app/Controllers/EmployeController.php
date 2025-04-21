@@ -8,21 +8,20 @@ class EmployeController extends BaseController
 {
     public function getTimeSlots($employeId)
     {
-        $model = new EmployeModel();
-        $creneaux = $model->getTimeSlots($employeId);
+        $creneaux = EmployeModel::find($employeId)->timeSlots;
         
         // Formater les données
         $formatted = array_map(function($c) {
-            $start = new DateTime($c['date']);
-            $end = (clone $start)->modify("+{$c['duree']} minutes");
+            $start = new DateTime($c->date);
+            $end = (clone $start)->modify("+{$c->duree} minutes");
             
             return [
                 'date' => $start->format('d/m/Y'),
                 'debut' => $start->format('H:i'),
                 'fin' => $end->format('H:i'),
-                'duree' => $c['duree']
+                'duree' => $c->duree
             ];
-        }, $creneaux);
+        }, $creneaux->toArray());
     
         return $this->response->setJSON($formatted);
     }

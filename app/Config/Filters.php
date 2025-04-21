@@ -34,9 +34,10 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
-        'auth' => \App\Filters\Auth::class,
-        'authGuard' => \App\Filters\AuthGuard::class,
-        'adminGuard' => \App\Filters\AdminGuard::class
+        'auth'          => \App\Filters\Auth::class,
+        'authGuard'     => \App\Filters\AuthGuard::class,
+        'adminGuard'    => \App\Filters\AdminGuard::class,
+        'jwt'           => \App\Filters\JwtFilter::class,
 
     ];
 

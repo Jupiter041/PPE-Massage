@@ -200,12 +200,15 @@ class TypesMassagesController extends BaseController
 
         $typeMassage = $this->typeMassageModel->find($id);
         if ($typeMassage) {
-            $typeMassage->delete();
-            return redirect()->to(base_url('TypesMassages'))->with('message', 'Type de massage supprimé avec succès');
+            try {
+                $typeMassage->delete();
+                return redirect()->to(base_url('TypesMassages'))->with('message', 'Type de massage supprimé avec succès');
+            } catch (\Exception $e) {
+                return redirect()->to('/TypesMassages')->with('error', 'Impossible de supprimer ce type de massage car il est lié à des réservations');
+            }
         }
         return redirect()->to('/TypesMassages')->with('error', 'Erreur lors de la suppression');
-    }
-    public function success()
+    }    public function success()
     {
         echo view('TypesMassages/Templates/header');
         echo view('TypesMassages/Templates/navbar');

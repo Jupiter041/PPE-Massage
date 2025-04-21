@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\LogModel;
+use App\Models\UserModel;
 
 class DashboardController extends BaseController
 {
@@ -14,13 +15,16 @@ class DashboardController extends BaseController
             return redirect()->to('/connexion');
         }
 
+        // Récupérer les données utilisateur avec Eloquent
+        $user = UserModel::find(session()->get('id'));
+
         // Préparer les données pour la vue
         $data = [
             'title' => 'Tableau de bord',
             'user' => [
-                'name' => session()->get('name'),
-                'email' => session()->get('email'),
-                'role' => session()->get('role')
+                'name' => $user->nom_utilisateur,
+                'email' => $user->email,
+                'role' => $user->role
             ]
         ];
 

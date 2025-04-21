@@ -19,9 +19,6 @@ class NavBarControlleur extends Controller
         // Démarrer la session
         $session = session();
         
-        // Créer une instance du modèle User
-        $userModel = new UserModel();
-        
         // Initialiser la variable user à null
         $data['user'] = null;
         $data['isAdmin'] = false;
@@ -32,8 +29,8 @@ class NavBarControlleur extends Controller
             // Récupérer l'ID de l'utilisateur depuis la session
             $userId = $session->get('id');
             
-            // Rechercher l'utilisateur dans la base de données
-            $user = $userModel->find($userId);
+            // Rechercher l'utilisateur dans la base de données avec Eloquent
+            $user = UserModel::find($userId);
             
             // Lever une exception si l'utilisateur n'est pas trouvé
             if (!$user) {
@@ -49,10 +46,9 @@ class NavBarControlleur extends Controller
         }
 
         // Retourner la vue avec les données
-        return view('TypesMassages/Templates/navbar', $data);
-        
         if ($data['isAdmin']) {
             return view('TypesMassages/Templates/adminnav', $data);
         }
+        return view('TypesMassages/Templates/navbar', $data);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 use App\Models\UserModel;
-use App\Models\ClientModel;
 
 class InscriptionController extends BaseController {
     public function index() {
@@ -23,27 +22,14 @@ class InscriptionController extends BaseController {
         ];
 
         if ($this->validate($rules)) {
-            // Enregistrer l'utilisateur
-            $userModel = new UserModel();
-            $data = [
-                'nom_utilisateur' => $this->request->getPost('nom_utilisateur'),
-                'email' => $this->request->getPost('email'),
-                'mot_de_passe' => password_hash($this->request->getPost('mot_de_passe'), PASSWORD_DEFAULT),
-                'role' => '3' // Par défaut, nouveau utilisateur avec rôle 3 (utilisateur standard)
-            ];
-            
             try {
-                $userId = $userModel->insert($data);
-                
-                // Créer le client associé
-                $clientModel = new ClientModel();
-                $clientData = [
+                // Utilisation d'Eloquent pour créer l'utilisateur
+                $user = UserModel::create([
+                    'nom_utilisateur' => $this->request->getPost('nom_utilisateur'),
                     'email' => $this->request->getPost('email'),
-                    'compte_id' => $userId,
-                    'civilite' => ''
-                ];
-                
-                $clientModel->insert($clientData);
+                    'mot_de_passe' => password_hash($this->request->getPost('mot_de_passe'), PASSWORD_DEFAULT),
+                    'role' => '3' // Par défaut, nouveau utilisateur avec rôle 3 (utilisateur standard)
+                ]);
                 
                 $session->setFlashdata('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');
                 return redirect()->to('/connexion');

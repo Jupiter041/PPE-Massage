@@ -444,9 +444,14 @@ select:focus {
     font-weight: 600;
     letter-spacing: 0.5px;
     transition: all 0.3s ease;
-    width: 100%;
     margin-top: 30px;
     text-transform: uppercase;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    white-space: normal;
+    width: fit-content;
 }
 
 .btn:hover {
