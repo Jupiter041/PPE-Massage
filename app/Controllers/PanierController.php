@@ -38,11 +38,12 @@ class PanierController extends BaseController
         if (empty($compteId)) {
             return redirect()->to('/connexion')->with('error', 'Session invalide');
         }
-        $panier = $this->panierModel->with('typeMassage')
+
+        $panier = PanierModel::with('typeMassage')
             ->where('compte_id', $compteId)
             ->get();
 
-        $employes = $this->employeModel->findAll();
+        $employes = EmployeModel::all();
 
         $data = [
             'title' => 'Mon Panier',
