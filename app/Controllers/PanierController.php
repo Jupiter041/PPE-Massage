@@ -50,6 +50,7 @@ class PanierController extends BaseController
             'panier' => $panier,
             'employes' => $employes
         ];
+
         echo view('TypesMassages/Templates/header');
         echo view('TypesMassages/Templates/navbar');
         echo view('TypesMassages/panier', $data);

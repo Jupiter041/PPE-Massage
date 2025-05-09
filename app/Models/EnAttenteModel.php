@@ -66,12 +66,20 @@ class EnAttenteModel extends Model
         $existing = self::where('panier_id', $panierId)->first();
         
         if ($existing) {
-            // Met à jour l'entrée existante
-            return $existing->update($data);
+            // Met à jour l'entrée existante avec les nouvelles données
+            $existing->fill($data);
+            if ($existing->save()) {
+                return $existing;
+            }
+            return false;
         } else {
             // Crée une nouvelle entrée si elle n'existe pas
             $data['panier_id'] = $panierId;
             return self::create($data);
         }
+    }
+
+    public function getByPanierId($panierId) {
+        return self::where('panier_id', $panierId)->first();
     }
 }

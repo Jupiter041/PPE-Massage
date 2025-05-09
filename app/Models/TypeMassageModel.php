@@ -10,8 +10,4 @@ class TypeMassageModel extends Model
     protected $primaryKey = 'type_id';
     protected $fillable = ['nom_type', 'description', 'prix'];
 
-    public function findAllAsObjects()
-    {
-        return $this->all();
-    }
 }

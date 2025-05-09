@@ -32,7 +32,11 @@
                         <td class="cart-quantity"><?= esc($item->quantite) ?></td>
                         <td class="cart-total"><?= $item->getTotal() ?> €</td>
                         <td class="cart-actions">
-                            <a href="<?= base_url('TypesMassages/en_attente/' . $item->type_massage_id) ?>" class="btn btn-primary">Réserver</a>
+                            <?php if ($item->hasPendingReservation): ?>
+                                <a href="<?= base_url('TypesMassages/en_attente/' . $item->type_massage_id) ?>" class="btn btn-edit">Modifier</a>
+                            <?php else: ?>
+                                <a href="<?= base_url('TypesMassages/en_attente/' . $item->type_massage_id) ?>" class="btn btn-primary">Réserver</a>
+                            <?php endif; ?>
                             <a href="<?= base_url('panier/supprimer/' . $item->panier_id) ?>" class="btn btn-remove" onclick="return confirm('Êtes-vous sûr de vouloir retirer cet article du panier ?');">
                                 Retirer
                             </a>

@@ -33,7 +33,7 @@ class EnAttenteController extends BaseController
         $panier = $panierModel->where('compte_id', $compteId)->first();
 
         $data = [
-            'employes' => EmployeModel::findAll(),
+            'employes' => EmployeModel::all(),
             'salles' => SalleModel::all(),
             'type_id' => $type_id,
             'panier' => $panier
@@ -133,7 +133,7 @@ class EnAttenteController extends BaseController
         $panier = $panierModel->where('compte_id', $compteId)->first();
 
         $data = [
-            'employes' => EmployeModel::findAll(),
+            'employes' => EmployeModel::all(),
             'salles' => SalleModel::all(),
             'reservation' => $reservation,
             'type_id' => $reservation->type_id,

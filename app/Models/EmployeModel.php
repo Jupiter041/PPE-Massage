@@ -30,10 +30,6 @@ class EmployeModel extends Model
         return $this->hasMany(EnAttenteModel::class, 'employe_id', 'employe_id');
     }
 
-    public static function findAll()
-    {
-        return self::all();
-    }
 
     public static function getEmployeDisponible($dateDebut, $dateFin)
     {

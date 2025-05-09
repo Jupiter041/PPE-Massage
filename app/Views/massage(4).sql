@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 17, 2025 at 08:10 PM
+-- Generation Time: Apr 28, 2025 at 08:25 AM
 -- Server version: 10.11.11-MariaDB-0+deb12u1
 -- PHP Version: 8.2.28
 
@@ -40,7 +40,7 @@ CREATE TABLE `comptes_utilisateurs` (
 --
 
 INSERT INTO `comptes_utilisateurs` (`compte_id`, `nom_utilisateur`, `mot_de_passe`, `role`, `email`) VALUES
-(1, 'admincool', '$2y$10$OmDggzXRxhaTMSLmPMdWMuRsjPfBUsY9GrKRea3PDu7cHdmUuR/7C', 1, 'sylvain.pivois@outlook.com'),
+(1, 'admin', '$2y$10$nld7vr2/KYaurxOrfwnZcuer7wqog.x.Lirwo0CNuz23OGNsfm39q', 1, 'sylvain.pivois@outlook.com'),
 (2, 'employe1', '$2y$10$OmDggzXRxhaTMSLmPMdWMuRsjPfBUsY9GrKRea3PDu7cHdmUuR/7C', 2, ''),
 (3, 'employe2', '$2y$10$OmDggzXRxhaTMSLmPMdWMuRsjPfBUsY9GrKRea3PDu7cHdmUuR/7C', 2, ''),
 (4, 'client1', 'client123', 3, ''),
@@ -77,6 +77,31 @@ CREATE TRIGGER `log_after_update_compte` AFTER UPDATE ON `comptes_utilisateurs` 
 END
 $$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `empechements`
+--
+
+CREATE TABLE `empechements` (
+  `empechement_id` int(11) NOT NULL,
+  `employe_id` int(11) NOT NULL,
+  `motif` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `reservation_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `empechements`
+--
+
+INSERT INTO `empechements` (`empechement_id`, `employe_id`, `motif`, `created_at`, `reservation_id`) VALUES
+(2, 2, 'Formation professionnelle', '2025-04-24 08:30:00', NULL),
+(3, 100, 'Rendez-vous médical', '2025-04-24 13:45:00', NULL),
+(4, 103, 'Réunion d\'équipe', '2025-04-24 15:20:00', NULL),
+(5, 1, 'Événement familial', '2025-04-25 07:10:00', NULL),
+(6, 2, 'Maintenance équipement', '2025-04-25 12:30:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -144,6 +169,14 @@ CREATE TABLE `en_attente` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `panier_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `en_attente`
+--
+
+INSERT INTO `en_attente` (`en_attente_id`, `compte_id`, `type_id`, `duree`, `heure_reservation`, `salle_id`, `employe_id`, `preference_praticien`, `commentaires`, `created_at`, `panier_id`) VALUES
+(169, 10, 4, 90, '2025-04-29 14:00:00', 1, 1, 'F', 'azsdfgh', '2025-04-17 20:01:16', 126),
+(180, 1, 4, 30, '2025-04-24 12:00:00', 1, 100, 'F', 'ezqgzrhrdtjygfyjtjrdy', '2025-04-22 04:39:13', 143);
 
 --
 -- Triggers `en_attente`
@@ -315,7 +348,55 @@ INSERT INTO `logs` (`log_id`, `table_name`, `action`, `description`, `date_log`)
 (161, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 120', '2025-04-17 20:03:43'),
 (162, 'types_massages', 'UPDATE', 'Type de massage modifié - ID: 100', '2025-04-17 20:05:25'),
 (163, 'comptes_utilisateurs', 'UPDATE', 'Compte modifié - ID: 10', '2025-04-17 20:07:45'),
-(164, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 121', '2025-04-17 20:07:56');
+(164, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 121', '2025-04-17 20:07:56'),
+(165, 'panier', 'DELETE', 'Article supprimé du panier - ID: 121', '2025-04-17 20:40:01'),
+(166, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 122', '2025-04-17 20:40:10'),
+(167, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 123', '2025-04-17 20:58:53'),
+(168, 'panier', 'DELETE', 'Article supprimé du panier - ID: 122', '2025-04-17 20:59:02'),
+(169, 'panier', 'DELETE', 'Article supprimé du panier - ID: 123', '2025-04-17 20:59:02'),
+(170, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 124', '2025-04-17 20:59:05'),
+(171, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 125', '2025-04-17 20:59:10'),
+(172, 'panier', 'DELETE', 'Article supprimé du panier - ID: 125', '2025-04-17 21:30:25'),
+(173, 'panier', 'DELETE', 'Article supprimé du panier - ID: 124', '2025-04-17 22:00:20'),
+(174, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 126', '2025-04-17 22:01:03'),
+(175, 'panier', 'DELETE', 'Article supprimé du panier - ID: 120', '2025-04-17 22:01:57'),
+(176, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 127', '2025-04-19 23:11:59'),
+(177, 'panier', 'DELETE', 'Article supprimé du panier - ID: 127', '2025-04-19 23:12:22'),
+(178, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 128', '2025-04-19 23:16:03'),
+(179, 'panier', 'DELETE', 'Article supprimé du panier - ID: 128', '2025-04-19 23:16:31'),
+(180, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 129', '2025-04-19 23:20:01'),
+(181, 'panier', 'DELETE', 'Article supprimé du panier - ID: 129', '2025-04-19 23:20:33'),
+(182, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 130', '2025-04-19 23:25:46'),
+(183, 'panier', 'DELETE', 'Article supprimé du panier - ID: 130', '2025-04-19 23:31:14'),
+(184, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 131', '2025-04-20 00:38:07'),
+(185, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 132', '2025-04-20 00:38:18'),
+(186, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 133', '2025-04-20 00:38:27'),
+(187, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 134', '2025-04-21 15:58:30'),
+(188, 'panier', 'DELETE', 'Article supprimé du panier - ID: 131', '2025-04-21 16:08:13'),
+(189, 'panier', 'DELETE', 'Article supprimé du panier - ID: 132', '2025-04-21 16:08:13'),
+(190, 'panier', 'DELETE', 'Article supprimé du panier - ID: 133', '2025-04-21 16:08:13'),
+(191, 'panier', 'DELETE', 'Article supprimé du panier - ID: 134', '2025-04-21 16:08:13'),
+(192, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 135', '2025-04-21 16:08:37'),
+(193, 'comptes_utilisateurs', 'UPDATE', 'Compte modifié - ID: 1', '2025-04-21 16:13:05'),
+(194, 'types_massages', 'INSERT', 'Nouveau type de massage créé - ID: 101', '2025-04-21 16:13:56'),
+(195, 'types_massages', 'DELETE', 'Type de massage supprimé - ID: 101', '2025-04-21 16:14:03'),
+(196, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 136', '2025-04-21 16:15:03'),
+(197, 'panier', 'DELETE', 'Article supprimé du panier - ID: 135', '2025-04-21 16:15:06'),
+(198, 'panier', 'DELETE', 'Article supprimé du panier - ID: 136', '2025-04-21 16:15:06'),
+(199, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 137', '2025-04-21 16:15:58'),
+(200, 'panier', 'DELETE', 'Article supprimé du panier - ID: 137', '2025-04-21 17:10:53'),
+(201, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 138', '2025-04-21 17:16:56'),
+(202, 'panier', 'DELETE', 'Article supprimé du panier - ID: 138', '2025-04-21 17:17:15'),
+(203, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 139', '2025-04-21 21:17:17'),
+(204, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 140', '2025-04-21 21:19:02'),
+(205, 'panier', 'DELETE', 'Article supprimé du panier - ID: 139', '2025-04-21 21:21:54'),
+(206, 'panier', 'DELETE', 'Article supprimé du panier - ID: 140', '2025-04-21 21:21:57'),
+(207, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 141', '2025-04-22 06:37:48'),
+(208, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 142', '2025-04-22 06:38:09'),
+(209, 'panier', 'DELETE', 'Article supprimé du panier - ID: 142', '2025-04-22 06:38:22'),
+(210, 'panier', 'DELETE', 'Article supprimé du panier - ID: 141', '2025-04-22 06:38:23'),
+(211, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 143', '2025-04-22 06:38:59'),
+(212, 'panier', 'INSERT', 'Nouvel article ajouté au panier - ID: 144', '2025-04-22 06:39:01');
 
 -- --------------------------------------------------------
 
@@ -336,8 +417,9 @@ CREATE TABLE `panier` (
 --
 
 INSERT INTO `panier` (`panier_id`, `compte_id`, `type_massage_id`, `quantite`, `date_ajout`) VALUES
-(120, 1, 1, 1, '2025-04-17 18:03:43'),
-(121, 10, 2, 1, '2025-04-17 18:07:56');
+(126, 10, 4, 1, '2025-04-17 20:01:03'),
+(143, 1, 4, 1, '2025-04-22 04:38:59'),
+(144, 1, 1, 1, '2025-04-22 04:39:01');
 
 --
 -- Triggers `panier`
@@ -400,7 +482,18 @@ INSERT INTO `reservations` (`reservation_id`, `heure_reservation`, `commentaires
 (107, '2025-04-24 14:50:00', 'azertyuioppoiuytreza', 90, 2, 60, 2, 'F', '2025-04-13 23:50:41', 1),
 (108, '2025-04-24 16:50:00', 'azertyuiop', 60, 3, 100, 1, 'F', '2025-04-15 12:15:43', 1),
 (109, '2025-04-24 13:00:00', 'azertghjklpoijhbv', 90, 1, 2, 2, 'F', '2025-04-15 12:24:11', 1),
-(110, '2025-04-23 13:00:00', 'azertyuiop', 30, 1, 2, 1, 'F', '2025-04-15 14:06:08', 10);
+(110, '2025-04-23 13:00:00', 'azertyuiop', 30, 1, 2, 1, 'F', '2025-04-15 14:06:08', 10),
+(111, '2025-04-24 14:00:00', 'azdfghn', 90, 3, 2, 100, 'F', '2025-04-17 20:40:01', 10),
+(112, '2025-04-24 16:30:00', 'azsdfghn', 90, 2, 3, 103, 'F', '2025-04-17 21:30:25', 10),
+(113, '2025-04-24 12:30:00', 'zsdfghjk', 90, 2, 1, 103, 'F', '2025-04-17 22:00:20', 10),
+(114, '2025-04-25 14:00:00', 'zertyuio', 90, 2, 1, 100, 'F', '2025-04-17 22:01:57', 1),
+(115, '2025-04-24 09:00:00', 'azertyuiop', 90, 1, 2, 100, 'F', '2025-04-19 23:12:22', 1),
+(116, '2025-04-24 10:30:00', 'poiuytreza', 90, 3, 3, 103, 'F', '2025-04-19 23:16:31', 1),
+(117, '2025-04-24 18:00:00', 'zezgrtrj', 90, 1, 1, 2, 'H', '2025-04-19 23:20:33', 1),
+(118, '2025-04-24 19:30:00', 'azertyuiopmlkjhgfdsq', 30, 3, 3, 1, 'F', '2025-04-19 23:31:14', 1),
+(119, '2025-04-25 13:30:00', 'problèmes de dos', 30, 1, 3, 103, 'F', '2025-04-21 17:10:53', 1),
+(120, '2025-04-30 14:00:00', 'qzerxtfcgvhbj', 90, 3, 2, 103, 'F', '2025-04-21 17:17:15', 1),
+(121, '2025-04-30 10:30:00', 'qzegerhdrtjhdrtjtdr', 90, 2, 3, 2, 'H', '2025-04-22 06:38:23', 1);
 
 --
 -- Triggers `reservations`
@@ -417,6 +510,7 @@ DELIMITER $$
 CREATE TRIGGER `before_employe_reservation_insert` BEFORE INSERT ON `reservations` FOR EACH ROW BEGIN
     DECLARE count_employe INT;
     
+    -- Vérifie seulement si l'employé est déjà réservé (peu importe le client)
     SELECT COUNT(*) INTO count_employe
     FROM reservations 
     WHERE employe_id = NEW.employe_id 
@@ -444,16 +538,18 @@ DELIMITER $$
 CREATE TRIGGER `before_reservation_insert` BEFORE INSERT ON `reservations` FOR EACH ROW BEGIN
     DECLARE count_reservations INT;
     
+    -- Vérifie seulement les réservations du même client
     SELECT COUNT(*) INTO count_reservations
     FROM reservations 
     WHERE salle_id = NEW.salle_id 
+    AND compte_id = NEW.compte_id
     AND DATE(heure_reservation) = DATE(NEW.heure_reservation)
     AND ((heure_reservation BETWEEN NEW.heure_reservation AND DATE_ADD(NEW.heure_reservation, INTERVAL NEW.duree MINUTE))
     OR (DATE_ADD(heure_reservation, INTERVAL duree MINUTE) BETWEEN NEW.heure_reservation AND DATE_ADD(NEW.heure_reservation, INTERVAL NEW.duree MINUTE)));
     
     IF count_reservations > 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'La salle est déjà réservée pour ce créneau horaire';
+        SET MESSAGE_TEXT = 'Vous avez déjà une réservation pour ce créneau horaire';
     END IF;
 END
 $$
@@ -582,6 +678,14 @@ ALTER TABLE `comptes_utilisateurs`
   ADD PRIMARY KEY (`compte_id`);
 
 --
+-- Indexes for table `empechements`
+--
+ALTER TABLE `empechements`
+  ADD PRIMARY KEY (`empechement_id`),
+  ADD KEY `employe_id` (`employe_id`),
+  ADD KEY `fk_empechement_reservation` (`reservation_id`);
+
+--
 -- Indexes for table `employe`
 --
 ALTER TABLE `employe`
@@ -644,6 +748,12 @@ ALTER TABLE `comptes_utilisateurs`
   MODIFY `compte_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
 
 --
+-- AUTO_INCREMENT for table `empechements`
+--
+ALTER TABLE `empechements`
+  MODIFY `empechement_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT for table `employe`
 --
 ALTER TABLE `employe`
@@ -653,25 +763,25 @@ ALTER TABLE `employe`
 -- AUTO_INCREMENT for table `en_attente`
 --
 ALTER TABLE `en_attente`
-  MODIFY `en_attente_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=164;
+  MODIFY `en_attente_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=181;
 
 --
 -- AUTO_INCREMENT for table `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=213;
 
 --
 -- AUTO_INCREMENT for table `panier`
 --
 ALTER TABLE `panier`
-  MODIFY `panier_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=122;
+  MODIFY `panier_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
 
 --
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `reservation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=122;
 
 --
 -- AUTO_INCREMENT for table `Salle`
@@ -683,11 +793,18 @@ ALTER TABLE `Salle`
 -- AUTO_INCREMENT for table `types_massages`
 --
 ALTER TABLE `types_massages`
-  MODIFY `type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `empechements`
+--
+ALTER TABLE `empechements`
+  ADD CONSTRAINT `empechements_ibfk_1` FOREIGN KEY (`employe_id`) REFERENCES `employe` (`employe_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_empechement_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservations` (`reservation_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `employe`

@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\ReservationsModel;
 use App\Models\EmployeModel;
 use App\Models\TypeMassageModel;
+use App\Models\EmpechementModel;
 use CodeIgniter\API\ResponseTrait;
 
 class WebServiceController extends BaseController
@@ -51,23 +52,63 @@ class WebServiceController extends BaseController
 
     public function getComments($id = null) 
     {
+        $model = new ReservationsModel();
+        
         if ($id) {
-            $reservation = ReservationsModel::find($id);
+            $reservation = $model->find($id);
             if (!$reservation) {
                 return $this->fail('Réservation non trouvée', 404);
             }
             return $this->respond(['commentaires' => $reservation->commentaires]);
         }
 
-        $reservations = ReservationsModel::select('reservation_id', 'commentaires', 'heure_reservation')
-            ->whereNotNull('commentaires')
+        $reservations = $model->select('reservation_id, commentaires, heure_reservation')
+            ->where('commentaires IS NOT NULL')
             ->orderBy('heure_reservation', 'DESC')
-            ->get();
+            ->all();
 
-        if ($reservations->isEmpty()) {
+        if (empty($reservations)) {
             return $this->respondNoContent();
         }
 
         return $this->respond($reservations);
+    }
+
+
+    public function createEmpechement()
+    {
+        try {
+            helper('jwt');
+            $user = getConnectedUser();
+            
+            $json = $this->request->getJSON();
+            
+            if (empty($json)) {
+                return $this->fail('Invalid JSON data received', 400);
+            }
+
+            if (!isset($json->employe_id) || !isset($json->motif)) {
+                return $this->fail('Missing required fields', 400);
+            }
+            
+            $empechement = new EmpechementModel();
+            $data = [
+                'employe_id' => $json->employe_id,
+                'motif' => $json->motif,
+                'reservation_id' => isset($json->reservation_id) ? $json->reservation_id : null
+            ];
+            
+            $result = $empechement->insert($data);
+            
+            if (!$result) {
+                return $this->fail('Failed to create empechement', 500);
+            }
+            
+            return $this->respond(['success' => true]);
+            
+        } catch (\Exception $e) {
+            log_message('error', '[createEmpechement] ' . $e->getMessage());
+            return $this->fail('Une erreur interne est survenue', 500);
+        }
     }
 }

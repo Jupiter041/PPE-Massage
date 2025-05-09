@@ -1,4 +1,5 @@
 <?= $this->include('TypesMassages/Templates/header') ?>
+<?= $this->include('TypesMassages/Templates/adminnav') ?>
 <?= $this->include('TypesMassages/Templates/navbar') ?>
 
 <div class="container">
@@ -20,7 +21,7 @@
                 <td><?= number_format($employe['heures_mois']/60, 1) ?>h</td>
                 <td><?= number_format($employe['heures_total']/60, 1) ?>h</td>
                 <td>
-                    <button class="btn-details" data-id="<?= $employe['employe_id'] ?>">
+                    <button class="btn btn-info btn-details" data-id="<?= $employe['employe_id'] ?>">
                         Voir les créneaux
                     </button>
                 </td>
@@ -84,6 +85,12 @@ document.querySelectorAll('.btn-details').forEach(btn => {
 
 document.querySelector('.close').addEventListener('click', () => {
     document.getElementById('detailsModal').style.display = 'none';
+});
+
+window.addEventListener('click', (event) => {
+    if (event.target == document.getElementById('detailsModal')) {
+        document.getElementById('detailsModal').style.display = 'none';
+    }
 });
 </script>
 

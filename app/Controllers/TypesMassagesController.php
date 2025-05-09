@@ -47,7 +47,7 @@ class TypesMassagesController extends BaseController
             $data['user'] = $user;
         }
 
-        $typesMassages = $this->typeMassageModel->findAllAsObjects();
+        $typesMassages = $this->typeMassageModel->all();
         $data['typesMassages'] = $typesMassages;
 
         echo view('TypesMassages/Templates/header');
