@@ -18,24 +18,27 @@ class LogsController extends BaseController
 
     public function index()
     {
-        $table = $this->request->getGet('table');
-        $action = $this->request->getGet('action');
+        $data = [
+            'title' => 'Logs système',
+            'table' => $this->request->getGet('table'),
+            'action' => $this->request->getGet('action')
+        ];
         
         $query = $this->logModel->orderBy('date_log', 'DESC');
         
-        if (!empty($table)) {
-            $query->where('table_name', $table);
+        if (!empty($data['table'])) {
+            $query->where('table_name', $data['table']);
         }
-        if (!empty($action)) {
-            $query->where('action', $action);
+        if (!empty($data['action'])) {
+            $query->where('action', $data['action']);
         }
         
-        $logs = $query->get()->toArray();
+        $data['logs'] = $query->get()->toArray();
 
-        echo view('TypesMassages/Templates/header');
-        echo view('TypesMassages/Templates/navbar');
-        echo view('TypesMassages/logs', ['logs' => $logs]);
-        echo view('TypesMassages/Templates/footer');
+        return view('TypesMassages/Templates/header')
+            . view('TypesMassages/Templates/navbar')
+            . view('TypesMassages/logs', $data)
+            . view('TypesMassages/Templates/footer');
     }
 
     public function show($id)
@@ -44,15 +47,18 @@ class LogsController extends BaseController
             return redirect()->to('/logs')->with('error', 'Accès réservé aux administrateurs');
         }
 
-        $log = $this->logModel->find($id);
+        $data = [
+            'title' => 'Détail du log',
+            'log' => $this->logModel->find($id)
+        ];
         
-        if (!$log) {
+        if (!$data['log']) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException("Le log avec l'ID $id n'existe pas.");
         }
 
-        echo view('TypesMassages/Templates/header');
-        echo view('TypesMassages/Templates/navbar');
-        echo view('show', ['log' => $log]);
-        echo view('TypesMassages/Templates/footer');
+        return view('TypesMassages/Templates/header')
+            . view('TypesMassages/Templates/navbar')
+            . view('TypesMassages/show', $data)
+            . view('TypesMassages/Templates/footer');
     }
 }

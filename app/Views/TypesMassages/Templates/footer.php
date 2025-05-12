@@ -1,5 +1,5 @@
 <footer>
-    <em>&copy; 2024</em>
+    <em>&copy; 2025</em>
 </footer>
 </body>
 </html>

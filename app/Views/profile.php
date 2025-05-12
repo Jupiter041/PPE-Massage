@@ -10,7 +10,6 @@
             <p><strong>Nom:</strong> <?= esc(session()->get('name')) ?></p>
             <p><strong>Email:</strong> <?= esc(session()->get('email')) ?></p>
             <p><strong>Rôle:</strong> <?= esc(session()->get('role')) ?></p>
-            <!-- Ajoutez d'autres informations de profil si nécessaire -->
         </div>
 
         <a href="<?= base_url('profile/edit') ?>" class="btn btn-edit">Modifier le profil</a>

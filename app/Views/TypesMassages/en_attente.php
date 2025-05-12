@@ -72,7 +72,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     <?php if (isset($reservation)): ?>
-        // Si une réservation existe, activez le champ heure
+        // Si une réservation existe, active le champ heure
         document.getElementById('heure').disabled = false;
     <?php endif; ?>
 
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
     
-    // Écouter les changements sur la date et la durée
+    // Écoute les changements sur la date et la durée
     dateInput.addEventListener('change', updateTimeSlots);
     durationSelect.addEventListener('change', updateTimeSlots);
 });

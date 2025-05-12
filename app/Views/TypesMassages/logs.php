@@ -8,22 +8,21 @@
                       <label>Table</label>
                       <select name="table" id="table">
                           <option value="">Toutes</option>
-                          <option value="clients">Clients</option>
-                          <option value="comptes_utilisateurs">Comptes utilisateurs</option>
-                          <option value="employe">Employés</option>
-                          <option value="reservations">Réservations</option>
-                          <option value="Salle">Salles</option>
-                          <option value="types_massages">Types de massages</option>
-                          <option value="panier">Panier</option>
+                          <option value="comptes_utilisateurs" <?= $table == 'comptes_utilisateurs' ? 'selected' : '' ?>>Comptes utilisateurs</option>
+                          <option value="employe" <?= $table == 'employe' ? 'selected' : '' ?>>Employés</option>
+                          <option value="reservations" <?= $table == 'reservations' ? 'selected' : '' ?>>Réservations</option>
+                          <option value="Salle" <?= $table == 'Salle' ? 'selected' : '' ?>>Salles</option>
+                          <option value="types_massages" <?= $table == 'types_massages' ? 'selected' : '' ?>>Types de massages</option>
+                          <option value="panier" <?= $table == 'panier' ? 'selected' : '' ?>>Panier</option>
                       </select>
                   </div>
                   <div>
                       <label>Action</label>
                       <select name="action" id="action">
                           <option value="">Toutes</option>
-                          <option value="INSERT">Création</option>
-                          <option value="UPDATE">Modification</option>
-                          <option value="DELETE">Suppression</option>
+                          <option value="INSERT" <?= $action == 'INSERT' ? 'selected' : '' ?>>Création</option>
+                          <option value="UPDATE" <?= $action == 'UPDATE' ? 'selected' : '' ?>>Modification</option>
+                          <option value="DELETE" <?= $action == 'DELETE' ? 'selected' : '' ?>>Suppression</option>
                       </select>
                   </div>
                   <div>
